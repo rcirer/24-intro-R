@@ -1,0 +1,428 @@
+---
+title: "Iniciació al tractament de dades amb R"
+subtitle: "Suport a la Recerca i Transferència del Coneixement"
+author: "Rafel Cirer-Sastre (INEFC Lleida)"
+date: 03-04-2024
+format: 
+  revealjs:
+    slide-number: true
+    transition: fade
+    preview-links: auto
+    code-overflow: wrap
+    logo: imatges/inefc.png
+    footer: <https://inefc.gencat.cat>
+---
+
+# Introducció
+
+## On sóc i què faig aquí?
+
+::: {.incremental}
+- Estàs a una càpsula formativa **breu**
+- per conèixer un **llenguatge de programació**
+- que serveix per analitzar **dades**
+:::
+
+
+## Perquè R?
+
+::: {.incremental}
+- Programari codi obert i lliure
+- Llenguatge d'alt rendiment per l'anàlisi de dades
+- És l'eina amb les tècniques estadístiques més actualitzades
+- Creat per la comunitat, per a la comunitat
+- Visualització de dades
+- Reproducible Research
+:::
+
+
+```{r}
+#| show: false
+library(tidyverse)
+library(palmerpenguins)
+library(ggthemes)
+library(ggpubr)
+```
+
+## Exemple {auto-animate="true"}
+
+```{r}
+#| echo: true
+#| output: false
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+)
+```
+
+## Exemple {auto-animate="true"}
+
+```{r}
+#| echo: true
+#| output: false
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_point(
+    mapping = aes(color = species, shape = species)
+    )
+```
+
+## Exemple {auto-animate="true"}
+
+```{r}
+#| echo: true
+#| output: false
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_point(
+    mapping = aes(color = species, shape = species)
+    ) +
+  geom_smooth(method = "lm")
+```
+
+
+## Exemple {auto-animate="true"}
+
+```{r}
+#| echo: true
+#| output: false
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_point(
+    mapping = aes(color = species, shape = species)
+    ) +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  )
+```
+
+
+## Exemple {auto-animate="true"}
+
+```{r}
+#| echo: true
+#| output-location: slide
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_point(
+    mapping = aes(color = species, shape = species)
+    ) +
+  geom_smooth(method = "lm") +
+  labs(
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  ) +
+  scale_color_colorblind() +
+  theme_pubr()
+```
+
+
+## Resum de la formació
+
+-   Software
+-   Principis generals de programació
+-   Workflow
+-   Learn by doing
+
+
+## Objectiu de la formació
+
+Adquirir l'autonomia suficient per:
+
+-  Importar, manipular i visualitzar dades
+-  Trobar i entendre documentació de paquets externs
+
+
+# Software
+
+## Instal·lació
+:::: {.columns}
+
+::: {.column width="50%"}
+
+**R**^[r-project.org] és un 
+**llenguatge de programació** 
+orientat a l'anàlisi de dades
+
+:::
+
+::: {.column width="50%"}
+
+**RStudio**^[posit.co] és una 
+**interficie d'usuari**
+per iterpretar i executar R
+
+:::
+
+::::
+
+## Descàrrega del material
+
+www.github.com/rcirer
+
+
+# Principis generals
+
+## Propietats d'R {auto-animate=true}
+
+- Programació orientada a objectes
+
+## Propietats d'R {auto-animate=true}
+
+- RAM
+- Programació orientada a objectes
+
+
+## Propietats d'R {auto-animate=true}
+
+- Extensibilitat
+- RAM
+- Programació orientada a objectes
+
+## Propietats d'R {auto-animate=true}
+
+- Programació funcional
+- Extensibilitat
+- RAM
+- Programació orientada a objectes
+
+## Propietats d'R {auto-animate=true}
+
+- Reproduïble i col·laboratiu (github)
+- Programació funcional
+- Extensibilitat
+- RAM
+- Programació orientada a objectes
+
+## Propietats d'R {auto-animate=true}
+
+- Interacció amb altres llenguatges (Python, C, Java, ...)
+- Reproduïble i col·laboratiu (github)
+- Programació funcional
+- Extensibilitat
+- RAM
+- Programació orientada a objectes
+
+
+## Tipus de dades
+
+:::: {.columns}
+
+::: {.column width="33%"}
+
+### Lògic
+
+```{r}
+#| echo: true
+class(TRUE)
+class(F)
+class(NA)
+```
+
+:::
+
+::: {.column width="33%"}
+
+### Numèric
+
+```{r}
+#| echo: true
+class(1)
+class(3.14159)
+```
+:::
+
+::: {.column width="33%"}
+
+### Caràcter
+
+```{r}
+#| echo: true
+class("inefc")
+class("1")
+
+```
+:::
+
+::::
+
+
+## Estructures de dades
+
+### Vectors
+
+- Col·lecció d'elements
+- Tots els elements d'un vector són del mateix tipus
+
+
+### Matrius
+
+- Vector amb més d'una dimensió
+- Tots els elements d'una matriu són del mateix tipus
+
+
+### Llistes
+
+- Col·lecció de vectors
+- Cada vector (columna) pot ser d'un tipus i llargada diferent
+
+
+### Data Frame
+- Tipus especial de llista
+- Totes columnes de la mateixa llargada
+
+
+
+## Operadors aritmètics
+
+```{css}
+#| echo: false
+
+.reveal table {
+  font-size: smaller;
+}
+
+```
+
+Acció | Operador | Exemple | Output
+------------- | ------------- | ------------- | -------------
+Resta | - | `5 - 4` | `r 5 - 4`
+Suma | + | `5 + 4` | `r 5 + 4`
+Multiplicació | \* | `5 * 4` | `r 5 * 4`
+Divisió | / | `5 / 4` | `r 5 / 4`
+Exponent | ^ | `5 ^ 4` | `r 5 ^ 4`
+
+
+## Operadors lògics
+
+```{css}
+#| echo: false
+
+.reveal table {
+  font-size: smaller;
+}
+
+```
+
+Acció | Operador | Exemple | Output
+------------- | ------------- | ------------- | -------------
+Not | ! | `!TRUE` | `r !TRUE`
+And | & | `TRUE & FALSE` | `r TRUE & FALSE` 
+Or | `|` | `TRUE | FALSE` | `r TRUE | FALSE`
+
+## Operadors lògics
+
+```{css}
+#| echo: false
+
+.reveal table {
+  font-size: smaller;
+}
+
+```
+
+Acció | Operador | Exemple | Output
+------------- | ------------- | ------------- | -------------
+Igual | == | `2 == 2` | `r 2==2`
+Diferent | != | `2 != 2` | `r 2!=2`
+Menor que | < | `5 < 5` | `r 5 < 5`
+Menor o igual que | <= | `5 <= 5` | `r 5 <= 5`
+Major que | > | `5 > 5` | `r 5 > 5`
+Major o igual que | >= | `5 >= 5` | `r 5 >= 5`
+
+
+
+## Objectes
+
+::: {.fragment}
+### Assignació
+```{r}
+#| echo: true
+un_objecte <- 5 + 3
+un_objecte = 5 + 3
+5 + 3 -> un_objecte
+print(un_objecte)
+
+
+```
+:::
+
+
+::: {.fragment}
+### Test
+```{r}
+#| echo: true
+#| eval: false
+un_objecte > 6 & un_objecte < 10
+```
+:::
+
+::: {.fragment}
+```{r}
+#| echo: false
+#| eval: true
+un_objecte > 6 & un_objecte < 10
+```
+:::
+
+
+## Objectes
+
+### Vectors
+```{r}
+#| echo: true
+
+vector_numeric <- c(1, 2, 3, 4, 5)
+
+# Comprovacions
+class(vector_numeric)
+length(vector_numeric)
+vector_numeric[1]
+vector_numeric[1:3]
+vector_numeric[-3]
+
+```
+
+
+
+
+## Objectes
+
+```{r}
+b <- c("a", "b", "c", "d", "e")
+c <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+d <- c(1, "a", TRUE, 1.5, NA)
+```
+
+
+
+
+
+
+
+# Workflow
+
+
+
+
+# Learn by doing
+
+
+
+
+
+
