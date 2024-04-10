@@ -1,9 +1,9 @@
 #### Setup ####
-
-# install.packages("rio")
-# install.packages("tidyverse")
-# install.packages("ggrepel")
-# install.packages("ggsci")
+install.packages("rtools")
+install.packages("rio")
+install.packages("tidyverse")
+install.packages("ggrepel")
+install.packages("ggsci")
 
 library(rio)           
 library(tidyverse)     
@@ -12,9 +12,10 @@ library(ggsci)
 
 
 #### El primer gràfic! ####
+getwd()
 
-import("https://raw.githubusercontent.com/rcirer/24-intro-R/main/dades/olympics_athlete.csv") |>
-  filter(games != "Sochi") |>                           
+import("/Users/rcirer/Developer/24-intro-R/dades/olympics_athlete.csv") |>
+  # filter(games != "Sochi") |>                           
   ggplot(aes(x = year, y = cost_per_athlete_mio_usd, color = type, label = games)) +
   geom_smooth(se = FALSE) + 
   geom_label_repel(box.padding = 0.5, segment.color = "gray", show.legend = FALSE) +

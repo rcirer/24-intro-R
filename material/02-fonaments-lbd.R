@@ -5,11 +5,15 @@
 
 # Assignació: atribueixes un valor a un objecte amb l'operador `<-` així
 
+x <- 36
+z <- "Rafel"
 
 
 # També funciona això, però no ho facis:
 
+x = 37
 
+37 == 37
 
 # Functions: programar consisteix en executar funcions. Moltes funcions.
 
@@ -23,8 +27,9 @@
 
 # Funcions: pots escriure tu funcions noves:
 
+duplica <- function(x) { x*2}
 
-
+duplica(x)
 
 # Ajuda / documentació
 
@@ -47,13 +52,13 @@
 
 # Pots veure la citació d'un paquet amb la funció `citation()`
 
-
+citation("brms")
 
 
 # Directoris
 
 
-
+getwd()
 
 
 #### Tipus de dades ############################################################
@@ -67,34 +72,41 @@
 ## Lògic =======================================================================
 # Pots fer operacions lògiques amb els operadors `==`, `!=`, `>`, `<`, `>=`, `<=`
 
+"Oleguer" == "Rafel"
 
-
+5 == (3+2)
 
 
 ## Numèric =====================================================================
 # Pots fer operacions aritmètiques amb els operadors `+`, `-`, `*`, `/`
 
-
+10/3
 
 
 ## Caràcter ====================================================================
 # Pots concatenar caràcters amb l'operador `paste()`
 
+x <- "Hola"
+y <- "a tothom!"
 
+paste(x, y)
 
+x <-1:10
 
+paste("cmj", x)
 
 #### Estructures de dades ######################################################
 
 ## Vector ======================================================================
 
 
+pes <- c(80, 34, 60, 58, 40)
 
-
+hist(pes)
 
 ## Matriu ======================================================================
 
-
+matrix(1:9, nrow = 3)
 
 
 
@@ -106,9 +118,11 @@
 
 ## Data.frame ==================================================================
 
+sexe = c("H", "D", "D", "D", "H")
 
+apte = c(T, T, T, F, F)
 
-
+data.frame(pes, sexe, apte)
 
 
 #### Tipus de variables ########################################################
@@ -116,11 +130,9 @@
 # Categòrica (qualitativa) =====================================================
 
 
-
-
 ## Binària 
 
-
+sexe <- factor(sexe)
 
 
 ## Nominal
