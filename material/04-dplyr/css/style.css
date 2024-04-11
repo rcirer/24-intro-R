@@ -72,7 +72,7 @@ h5 {
 /*-------- Code chunk header panel ---------*/
 .panel-default > .panel-heading {
     color: white;
-    background-color: darkslateblue;
+    background-color: #0071EB;
     border: 0;
 }
 
@@ -175,7 +175,7 @@ a:hover, a:focus {
 /*------- Selected menu item -------*/
 .topicsList .topic.current {
     font-family: 'Tajawal', sans-serif;
-    background-color: mediumslateblue;
+    background-color: #96F036;
     color: white;
     border: 0;
     padding-left: 20px;
@@ -183,7 +183,7 @@ a:hover, a:focus {
 }
 /*--- When hovering ---*/
 .topicsList .topic:hover {
-    background-color: mediumorchid;
+    background-color: #96F036;
     color: white;
     padding-left: 20px;
     padding-right: 20px;
@@ -191,7 +191,7 @@ a:hover, a:focus {
 
 /*------- Solution / Hint buttons -------*/
 tutorial-exercise-input .btn-tutorial-solution {
-    background-color: mediumorchid;
+    background-color: #96F036;
     color: white;
     font-family: 'Tajawal', sans-serif;
     padding-top: 5px;
@@ -201,7 +201,7 @@ tutorial-exercise-input .btn-tutorial-solution {
 /*------- Solution popover --------*/
 popover-title {
     margin: 0;
-    background-color: mediumslateblue;
+    background-color: #96F036;
     color: white;
     font-family: 'Tajawal', sans-serif;
 }
@@ -211,7 +211,7 @@ popover-title {
 
 .tutorial-exercise-input .btn-xs:hover {
     font-weight: normal;
-    background-color: mediumorchid;
+    background-color: #0071EB;
     color: white;
     padding-top: 5px;
 }
@@ -219,7 +219,7 @@ popover-title {
 /*------- Button default/primary -------*/
 .btn-default {
     color: white;
-    background-color: mediumslateblue;
+    background-color: #0071EB;
     background-image: none;
     border: none;
     font-family: 'Tajawal', sans-serif;
@@ -229,7 +229,7 @@ popover-title {
 
 .btn-primary, .btn-success, .btn-info, .btn-light, .btn-xs  {
   color: white;
-    background-color: mediumslateblue;
+    background-color: #0071EB;
     background-image: none;
     border: none;
     font-family: 'Tajawal', sans-serif;
@@ -239,7 +239,7 @@ popover-title {
 
 .topicActions .btn-primary:hover, .btn-success:hover, .btn-info:hover, .btn-light:hover, .btn-xs:hover {
     color: white;
-    background-color: mediumorchid;
+    background-color: #96F036;
     background-image: none;
     border: none;
     font-family: 'Tajawal', sans-serif;
@@ -248,14 +248,14 @@ popover-title {
 }
 
 .btn-default:hover, btn-success:hover, btn-info:hover, btn-primary:hover {
-  background-color: mediumorchid;
+  background-color: #96F036;
   color: white;
   font-family: 'Tajawal', sans-serif;
   padding-top: 5px;
 }
 
 hr.examples {
-  border: 3px solid slateblue;
+  border: 3px solid #0071EB;
 }
 
 hr.activities {

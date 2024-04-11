@@ -1,6 +1,5 @@
 ---
-title: "Wrangling penguins: some basic data wrangling in R with dplyr"
-author: "Allison Horst"
+title: "Manipulació de dades amb R"
 output: 
   learnr::tutorial:
     css: css/style.css
@@ -20,15 +19,16 @@ library(here)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## 1. Welcome
+## 1. Benvinguda
 
-In this tutorial, we'll learn some basic functions to help you work with data using functions in the `dplyr` package, part of the `tidyverse` in *R*. 
+En aquest tutorial, aprendràs algunes funcions bàsiques que t'ajudaran a treballar amb dades, utilitzant el paquet `dplyr`, que forma part del `tidyverse` a *R*.
 
-#### What is the tidyverse?
 
-The [tidyverse](https://www.tidyverse.org/) is a collection of packages that contain useful functions for working with and visualizing data (and a bunch of other stuff). You don't need to install the `tidyverse` to write or run code in this tutorial, since it's already attached behind the scenes, but you can install it with `install.packages("tidyverse")` to work with it on your own outside of this tutorial.
+#### Què és tidyverse?
 
-#### What is dplyr?
+El [tidyverse](https://www.tidyverse.org/) és una col·lecció de paquets que contenen funcions útils per treballar amb dades i visualitzar-les (i moltes altres coses). No cal que instal·lis el `tidyverse` per escriure o executar el codi d'aquest tutorial, ja que ja està carregat en aquest entorn, però pots instal·lar-lo amb `install.packages("tidyverse")` per treballar amb ell pel teu compte fora d'aquest tutorial.
+
+#### Què és dplyr?
 
 ```{r, echo=FALSE, out.width="30%", fig.align = "left"}
 
@@ -36,7 +36,7 @@ knitr::include_graphics("images/dplyr_hex.png")
 
 ```
 
-`dplyr` is one package in the tidyverse. It is the home to many functions that make it easier for us to work with data. Those include things like selecting specific columns, deciding which rows to keep based on whether or not they match our conditions, and finding summary statistics for different variables and groups. Sometimes we call these steps part of "data wrangling." 
+`dplyr` és un dels paquets del `tidyverse`. Allotja moltes funcions que ens faciliten treballar amb dades. Inclouen coses com seleccionar columnes específiques, decidir quines files mantenir basant-nos en si compleixen o no les nostres condicions, i trobar estadístiques resum per a diferents variables i grups. A vegades anomenem aquests passos part de "data wrangling" (manipulació de dades).
 
 ```{r, echo=FALSE, out.width="100%", fig.align = "center", fig.cap = "Illustration from Hadley Wickham's 2019 talk, The Joy of Functional Programming"}
 
@@ -44,43 +44,40 @@ knitr::include_graphics("images/data_wrangler.png")
 
 ```
 
-#### What's in this tutorial? 
+#### Què hi ha en aquest tutorial?
 
-In this tutorial, you'll learn and practice examples using some functions in `dplyr` to work with data. Those are: 
+En aquest tutorial, aprendràs i practicaràs exemples utilitzant les funcions centrals de `dplyr` per treballar amb dades. Aquestes són:
 
-- `filter()`: keep rows that satisfy your conditions
-- `select()`: keep or exclude some columns
-- `rename()`: rename columns
-- `relocate()`: move columns around
-- `mutate()`: add a new column
-- `group_by()` + `summarize()`: get summary statistics by group
-- `across()`: apply a function across columns
-- `count()`: quickly find counts for different groups
-- `case_when()`: like friendly if-else
+- `filter()`: preserva les files que compleixen una condició
+- `select()`: preserva les columnes compleixen una condició
+- `rename()`: reanomena columnes (variables)
+- `relocate()`: reordena les columnes
+- `mutate()`: crea noves columnes
+- `group_by()` + `summarize()`: obtens estadístiques resum per a diferents grups
+- `across()`: aplicar funcions a múltiples columnes
+- `count()`: comptar els elements d'una variable
+- `case_when()`: aplica transformacions condicionals (per les ments més inquietes!)
 
-#### What's not in this tutorial? 
 
-A WHOLE LOT. Visit https://dplyr.tidyverse.org/ and [R for Data Science](https://r4ds.had.co.nz/) for more information and examples. 
+#### Blocs de codi per les activitats
 
-#### Code chunks for activities
-
-In each section of this tutorial, there will be examples and practice activities. You will complete practice activities in code chunks, like the one below. Once you enter your activity code, press 'Run' to see the output. If you get stuck, press the 'Hint' or 'Solution' button.
+A cada secció del tutorial, trobaràs exemples i activitats pràctiques. Completaràs activitats pràctiques en blocs de codi, com el que es mostra a continuació. Un cop introdueixis el teu codi, prem 'Run' per veure el resultat. Si et quedes encallat, demana'm ajuda o bé prem el botó 'Hint' o 'Solution'.
 
 ```{r calculator, exercise = TRUE}
 0.2 + 0.3
 ```
 
 ```{r calculator-hint}
-0.2 + 0.4 # Should be plus 0.4
+0.2 + 0.4 # Hauria de sumar 0.4
 ```
 
 ```{r calculator-solution}
-(0.2 + 0.4)*100 # Multiply by 100 to make a percentage
+(0.2 + 0.4)*100 # Multiplica per 100 per obtenir un percentatge
 ```
 
-When you press 'Run', the **output** of the code is returned below the code chunk.
+Quan pulses 'Run', el **resultat** del codi es mostra a sota del bloc de codi.
 
-Go ahead and try typing in some basic calculations in the area below, and notice that when you update the numbers and press 'Run', the output below it is updated. 
+Prova-ho tu escrivint a continuació algun càlcul bàsic, i observa que quan actualitzes els números i prem 'Run', la sortida s'actualitza.
 
 ```{r practice_calc, exercise = TRUE}
 
@@ -90,277 +87,257 @@ Go ahead and try typing in some basic calculations in the area below, and notice
 knitr::include_graphics("images/r_learners_sm.jpeg")  
 ```
 
-### Thank you to:
-
-#### `dplyr` creators & contributors! 
-
-Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2020). dplyr: A Grammar of Data Manipulation. R package version 1.0.2. https://CRAN.R-project.org/package=dplyr
-
-#### `tidyverse` creators & contributors! 
-
-Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, https://doi.org/10.21105/joss.01686
-
-#### `palmerpenguins` package coauthors 
-
-Thanks palmerpenguins team, Dr. Alison Hill & Dr. Kristen B. Gorman!
-
-Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. R package version 0.1.0. https://allisonhorst.github.io/palmerpenguins/
-
-**Valuable feedback and suggestions from:** 
-
-- Gordon Blasco (NCEAS)
-- Casey O'Hara (Bren School)
 
 <body>
-    <a class="button" href="https://github.com/allisonhorst/dplyr-learnr">Fork GitHub repo
-    </a>
 
-## 2. Meet the data
 
-We'll practice some wrangling in `dplyr` using data for penguin sizes recorded by Dr. Kristen Gorman and colleagues with the [Palmer Station Long Term Ecological Research site (Palmer LTER)](https://pal.lternet.edu/) at several islands in the Palmer Archipelago, Antarctica. Data are originally published in: Gorman KB, Williams TD, Fraser WR (2014) PLoS ONE 9(3): e90081. doi:10.1371/journal.pone.0090081, and made available through the Environmental Data Initiative (see data citation details [here](https://allisonhorst.github.io/palmerpenguins/index.html)).
+## 2. Dades
 
-You do **not** need to import the data to work through this tutorial - the data are already here waiting behind the scenes. If you *do* ever want to use the `penguins` dataset outside of this tutorial, you can install the `palmerpenguins` package from CRAN using `install.packages("palmerpenguins")` and learn more about the package [here](https://allisonhorst.github.io/palmerpenguins/).
+Practicarem amb les dades dels pingüins inefos. Aquestes dades són un subconjunt de les dades originals de Gorman et al. (2014) i estan disponibles a través del paquet `palmerpenguins` de R.
 
-#### A bit about the penguins:
+No necessites importar l'arxiu per treballar en aquest tutorial, ja que les dades ja estan aquí esperant darrere de les escenes. Si mai vols utilitzar el conjunt de dades `penguins` fora d'aquest tutorial, pots instal·lar el paquet `palmerpenguins` de CRAN utilitzant `install.packages("palmerpenguins")` i aprendre'n més sobre el paquet [aquí](https://allisonhorst.github.io/palmerpenguins/).
 
-The 3 species of penguins in this data set are Adelie, chinstrap and gentoo. They are all awesome and adorable.
+
+#### T'explico una mica sobre els pingüins?
+
+Hi ha 3 especies de pingüins en aquest conjunt de dades: Adelie, chinstrap i gentoo. 
 
 ```{r, echo=FALSE, out.width="100%", fig.align = "center"}
 knitr::include_graphics("images/lter_penguins.png")
 ```
 
-There are 8 variables included:
+El data.frame conté 8 variables
 
-- **species:** a factor denoting the penguin species (Adelie, Chinstrap, or Gentoo)
-- **island:** a factor denoting the island (in Palmer Archipelago, Antarctica) where observed
-- **bill_length_mm:** a number denoting length of the dorsal ridge of penguin bill (millimeters)
-- **bill_depth_mm:** a number denoting the depth of the penguin bill (millimeters)
-- **flipper_length_mm:** an integer denoting penguin flipper length (millimeters)
-- **body_mass_g:** an integer denoting penguin body mass (grams)
-- **sex:** a factor denoting penguin sex (male, female)
-- **year:** an integer denoting the study year (2007, 2008, or 2009)
+- **species:** un factor que denota la espècie (Adelie, Chinstrap, or Gentoo)
+- **island:** un factor que denota l'illa on l'han observat (Palmer Archipelago, Antarctica)
+- **bill_length_mm:** un número que denota la longitud de la cresta dorsal del bec del pingüí (mil·límetres)
+- **bill_depth_mm:** un número que denota la profunditat del bec del pingüí (mil·límetres)
+- **flipper_length_mm:** un número que denota la longitud de la aleta del pingüí (mil·límetres)
+- **body_mass_g:** un número que denota la massa corporal del pingüí (grams)
+- **sex:** un factor que denota el sexe del pingüí (male, female)
+- **year:** l'any d'observació (2007, 2008, or 2009)
 
-#### What do the data look like?
+#### Fem una ullada a les dades?
 
-Below is a glimpse of the first 10 lines of the penguins data (`NA`s indicate missing values throughout). Notice that the data are already in *tidy format* - meaning that:
+A continuació farem un cop d'ull a les primeres 10 línies de les dades dels pingüins (`NA`s indica valors perduts en tot el conjunt de dades). Observa que les dades ja estan en format *tidy* - el que significa que:
 
-- Each variable is a column
-- Each observation is a row
-- Each value is in its own cell
+- Cada variable és una columna
+- Cada observació és una fila
+- Cada valor està en la seva pròpia cel·la
 
-```{r, echo = FALSE}
-penguins %>%
-  head(10) %>%
-  kable() %>%
-  kable_styling(full_width = FALSE)
+
+```{r inspect, exercise = TRUE}
+head(penguins, 10)
 ```
 
-OK, go forth and `filter()`!
+Això és molt llarg! sabries obtenir 5 files en lloc de 10?
 
-## 3. dplyr::filter()
+```{r inspection, exercise = TRUE}
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/filter.html) for `filter()` documentation from tidyverse.org.
+```
 
-Use `filter()` to create a subset of the data only containing rows that satisfy your conditions.
+```{r inspection-hint}
+head(penguins, 15)
+```
 
-In the image below, the data must satisfy two conditions for a row (observation) to be retained: *type* must match "otter", and *site* must match "bay". Only two of the rows satisfy those conditions (the ones outlined in purple), so only those two would be retained upon running the code.
+Perfecte, endavant amb `filter()`!
+
+
+## 3. filter()
+
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/filter.html) per veure la documentació de `filter()`
+
+Utilitza `filter()` per crear un subconjunt de les dades només amb les files que compleixen les teves condicions.
+
+
+A la imatge següent, les dades han de satisfer dues condicions perquè una fila (observació) es mantingui: *type* ha de coincidir amb "otter", i *site* ha de coincidir amb "bay". Només dues de les files compleixen aquestes condicions (les que estan ressaltades en lila), així que només aquestes dues es mantindrien en executar el codi.
 
 ```{r, echo=FALSE, out.width="80%", fig.align = "center"}
 knitr::include_graphics("images/dplyr_filter_sm.png")
 ```
 
-As a reminder for the following examples, here's a sample from the **penguins** data (5 observations / 344 total).
+Anem a aprendre algunes formes diferents de com podem utilitzar `filter()` per ajudar-nos a mantenir o excloure files basades en les nostres condicions.
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
-Now let's learn some different ways we can use `filter()` to help us keep or exclude rows based on our conditions.
+### EXEMPLES DE FILTRES
 
-### FILTER EXAMPLES
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
+Fer un subconjunt amb només els pingüins "Chinstrap".
 
-Make a subset with only chinstrap penguins.
-
-In the code below, we **filter** the **penguins** data to only keep rows where the entry for **species** exactly matches "Chinstrap" (case sensitive). Note that when our condition is based on a string, the string is in quotation marks (here, "Chinstrap").
+El codi següent **filtra** les dades dels **pingüins** per mantenir només les files on **species** coincideix exactament amb "Chinstrap" (ojo, sensible a majúscules i minúscules). Tingues en compte que quan la nostra condició es basa en una cadena, la cadena està entre cometes (aquí, "Chinstrap").
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-dplyr::filter(penguins, species == "Chinstrap")
+filter(penguins, species == "Chinstrap")
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-From `penguins`, filter to only include chinstrap and gentoo penguins.
+Amb `penguins`, filtrar per incloure només els pingüins "Chinstrap" i "Gentoo".
 
-First, we need to be careful about the type of statement we're going to write. If we want to create a subset that contains chinstraps **and** gentoos, that means we want to keep rows where species matches "Chinstrap" **OR** "Gentoo". We can do this a couple different ways:
+Primer, hem de tenir cura del tipus d'afirmació que escriurem. Si volem crear un subconjunt que contingui chinstraps **i** gentoos, això vol dir que volem mantenir les files on l'espècie coincideix amb "Chinstrap" **O** "Gentoo", veritat?. Podem fer-ho de diverses maneres:
 
-- Use the "or" operator, `|` (the vertical line), between conditions
-- Use the `%in%` operator, followed by a vector of values to look for a match in
+- Utilitzant l'operador **O**, `|` (la línia vertical), entre condicions
+- Utilitzant l'operador `%in%`, seguit d'un vector de valors per buscar una coincidència
+
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE, eval = FALSE}
-# First way: using the or | operator
-dplyr::filter(penguins, species == "Chinstrap" | species == "Gentoo")
+# Primer: utilitzant |
+filter(penguins, species == "Chinstrap" | species == "Gentoo")
 ```
 
-Does the same thing as...
+Obtens el mateix que amb...
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-# Second way: using the %in% operator
-dplyr::filter(penguins, species %in% c("Chinstrap", "Gentoo"))
+# Segon: utilitzant %in% 
+filter(penguins, species %in% c("Chinstrap", "Gentoo"))
 ```
 
-Note that the output is identical for both methods above. It may seem like the first way is easier right now - but if you have a lot of potential matches you're looking for, the second way reduces redundancy and increases code readability.
+Fixa't que el resultat és idèntic per ambdós mètodes anteriors. Pot semblar que la primera manera és més fàcil ara mateix - però si tens moltes coincidències potencials que estàs buscant, la segona manera redueix la redundància i augmenta la llegibilitat del codi.
 
-**WARNING:** The condition `letter == c("A", "B")` is **very different** from `letter %in% c("A", "B")` - you will probably not EVER want to do the first, because it will work its way through the rows of the `letter` column looking for the strings "A" then "B" **in that order**. In other words, it will look for "A" in Row 1, then for "B" in Row 2, then "A" in Row 3, then "B" in Row 4, etc. - when what you probably want to do is just ask "Look in each row and keep it if it's "A" or "B"", which is what the second option (`letter %in% c("A", "B")`) will do.
+**ATENCIÓ**: La condició `letter == c("A", "B")` és **molt diferent** de `letter %in% c("A", "B")` - probablement mai voldràs fer la primera, perquè recorrerà les files de la columna `letter` buscant les cadenes "A" i "B" **en aquest ordre**. En altres paraules, buscarà "A" a la fila 1, després "B" a la fila 2, després "A" a la fila 3, després "B" a la fila 4, etc. - quan el que probablement vols fer és preguntar "Mira a cada fila i manté-la si és "A" o "B"", que és el que farà la segona opció (`letter %in% c("A", "B")`).
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-Introducing the pipe operator (`%>%`)!
+Et presento l'operador de canal (li diuen *pipe*) (`|>`)!
 
-In the examples above, we specified the dataset within the `filter()` function. That's fine for now, but moving forward we'll want to use the pipe operator (`%>%`) to perform operations in logical sequence. You can think of the pipe operator as saying "and then" in your code. For example:
+En els seguents exemples, especificarem el conjunt de dades dins de la funció `filter()`. Això està bé per ara, però en endavant voldrem utilitzar l'operador de canal (`|>`) per realitzar operacions en una seqüència lògica. Pots pensar en l'operador de canal com si diguéssim "i després" al teu codi. Per exemple:
 
-Collect kindling AND THEN open the flue AND THEN start fire using the pipe looks like:
+Recull llenya I DESPRÉS obre la xemeneia I DESPRÉS encén el foc:
 
 ```
-Collect kindling %>%
-        open the flue %>%
-        start fire
+Recull llenya |>
+  obre la xemeneia |>
+  encén el foc
 ```
-
-Let's say we want to use the pipe operator in the example above to filter for chinstraps. We start by telling R the data frame name, AND THEN what to do with it: data `%>%` thing, like this:
+Diguem que vols utilitzar l'operador de canal en l'Exemple anterior per filtrar els chinstraps. Comencem dient a R el nom del marc de dades, I DESPRÉS què fer amb ell: dades `|>` cosa, com això:
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-penguins %>%
-  dplyr::filter(species == "Chinstrap")
+penguins |>
+  filter(species == "Chinstrap")
 ```
 
-Moving forward in this tutorial, we'll use the pipe operator.
+A partir d'ara, utilitzarem l'operador de canal.
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4
 
-From `penguins`, make a subset with Adelie penguins on Dream Island.
+Amb `penguins`, fem un subconjunt amb els pingüins Adelie a Dream Island.
 
-Think carefully above the conditions. In this case, we only want to keep observations (rows) where the species is "Adelie" **AND** the island is "Dream" - a row should only be retained if both of those conditions are met. There are a number of ways you can write an **and** statement within `filter()`, including:
+Pensa un moment les condicions. En aquest cas, només volem mantenir les observacions (files) on l'espècie és "Adelie" **I** l'illa és "Dream" - una fila només s'ha de mantenir si es compleixen totes dues condicions. Hi ha diverses maneres de redactar una afirmació **i** dins de `filter()`, incloent:
 
-- A comma between conditions indicates both must be met (`filter(x == "a", y == "b")`)
-- An ampersand between conditions indicates both must be met (`filter(x == "a" & y == "b")`)
+- Una coma entre condicions indica que s'han de complir totes dues (`filter(x == "a", y == "b")`)
+- Amb un ampersand entre condicions indica que s'han de complir totes dues (`filter(x == "a" & y == "b")`)
 
-We can create a subset starting from penguins that only contains observations for Adelie penguins on Dream Island as follows:
+Crearem aquest subconjunt de la següent manera:
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-penguins %>%
+penguins |>
   filter(species == "Adelie", island == "Dream")
 ```
 
-### Keep or exclude rows based on values
+### Preservar o excloure files basades en valors
 
-We can also use `dplyr::filter()` to keep or exclude rows based on variable values using standard logical operators (`==`, `<=`, `>=`, `<`, `>`).
+També podem utilitzar `filter()` per mantenir o excloure files basades en valors de variables utilitzant operadors lògics estàndard (`==`, `<=`, `>=`, `<`, `>`).
 
-Unlike when setting conditions for strings, values within `filter()` don't need to be within quotation marks.
+Al contrari que quan establim condicions per a cadenes, els valors dins de `filter()` no han d'estar dins de cometes.
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 5
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 5
 
-From `penguins`, keep penguins with a flipper length greater than 200 mm.
+Amb `penguins`, mantenim els pingüins amb una longitud de bec superior a 200 mm.
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-penguins %>%
+penguins |>
   filter(flipper_length_mm > 200)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 6
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 6
 
-From `penguins`, keep observations where body mass less than or equal to 2900 g.
+Amb `penguins`, mantenim les observacions on la massa corporal és inferior o igual a 2900 g.
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-penguins %>%
+penguins |>
   filter(body_mass_g <= 2900)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 7
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 7
 
-From `penguins`, keep observations for Adelie penguins with a bill length greater than 40 mm.
+Amb `penguins`, mantenim les observacions dels pingüins Adelie amb una longitud de bec superior a 40 mm.
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-penguins %>%
+penguins  |> 
   filter(species == "Adelie", bill_length_mm > 40)
 ```
 
-### Exclude rows based on conditions
+### Excloure files basades en condicions
 
-Imagine you have a dataset that contains 10 penguin species, and you want to keep observations for 8 of those species. That would be a long list of species to match - if you were referring to the ones you want to keep.
+Imagina que tens un conjunt de dades que conté 10 espècies de pingüins (i no 3 com el nostre), i vols mantenir les observacions de 8 d'aquestes espècies. Això seria una llista llarga d'espècies per igualar - si et refereixes a les que vols mantenir.
 
-But we can also use `filter()` by saying what we **don't** want to keep, for example we could just list the two species we want to *exclude* to reduce the typing we have to do.
+També pots utilitzar `filter()` per excloure observacions basades en valors de variables. Utilitza `!=` per indicar "no coincideix" dins de la funció `filter()`.
 
-Use `!=` to indicate "does not match" within the `filter()` function.
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 8
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 8
-
-Exclude observations for chinstraps from the `penguins` data. In the code below, the `!=` operator is used within `filter()` to keep observations where the species variable **does not match** "Chinstrap".
+Exclou les observacions dels chinstraps de les dades `penguins`. En el codi següent, l'operador `!=` s'utilitza dins de `filter()` per mantenir les observacions on la variable d'espècie **no coincideix** amb "Chinstrap".
 
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
-penguins %>%
+penguins |>
   filter(species != "Chinstrap")
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### FILTER PRACTICE ACTIVITIES
+### ET TOCA A TU!!
 
+Als blocs de codi següents, escriu el teu propi codi per practicar amb la funció `filter()`. Si et quedes aturat, fes clic als botons "Pista" i "Solució".
 
-In the code chunks below, write your own code to practice with the `dplyr::filter()` function. If you get stuck, click on the "Hint" and "Solution" buttons.
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
-
-Use `filter()` to create a subset from `penguins` that only contains gentoo penguins with a bill depth greater than or equal to 15.5 millimeters.
+Utilitza `filter()` per crear un subconjunt de `penguins` que només contingui pingüins gentoo amb una profunditat de bec superior o igual a 15.5 mil·límetres.
 
 ```{r test_q1, exercise = TRUE}
 
 ```
 
 ```{r test_q1-hint, warning = FALSE}
-penguins %>%
+penguins |>
   filter(species == "", bill_depth_mm > ___)
 ```
 
 ```{r filter_q1-solution}
-penguins %>%
+penguins |>
   filter(species == "Gentoo", bill_depth_mm > 15.5)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Use `filter()` to create a subset from `penguins` that contains observations for male penguins recorded at Dream and Biscoe Islands.
+Utilitza `filter()` per crear un subconjunt de `penguins` que només contingui pingüins mascles enregistrats a les illes Dream i Biscoe.
 
 ```{r filter_q2, exercise = TRUE}
 
 ```
 
 ```{r filter_q2-hint}
-penguins %>%
+penguins |>
   filter(island %in% c("_____","_____"),
          sex == "_____")
 ```
 
 ```{r filter_q2-solution}
-penguins %>%
+penguins |>
   filter(island %in% c("Dream","Biscoe"),
          sex == "male")
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-Use `filter()` to create a subset from `penguins` that contains observations for female Adelie penguins with bill lengths less than 35 mm.
+Utilitza `filter()` per crear un subconjunt de `penguins` que només contingui pingüins femelles Adelie amb longitud de bec inferior a 35 mm.
 
 ```{r filter_q3, exercise = TRUE}
 
 ```
 
 ```{r filter_q3-hint}
-penguins %>%
+penguins |>
   filter(sex == "_____",
          species == "_____",
          bill_length_mm < _____)
@@ -368,857 +345,821 @@ penguins %>%
 
 
 ```{r filter_q3-solution}
-penguins %>%
+penguins |>
   filter(sex == "female",
          species == "Adelie",
          bill_length_mm < 35)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 4
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 4
 
-Create a subset from `penguins` containing observations for female chinstrap penguins on Dream and Torgersen Islands.
+Crea un subconjunt de `penguins` que contingui observacions de pingüins chinstrap femelles a les illes Dream i Torgersen.
 
 ```{r filter_q4, exercise = TRUE}
 
 ```
 
 ```{r filter_q4-hint}
-penguins %>%
+penguins |>
   filter(sex == "____",
-         species == "____") %>%
+         species == "____") |>
   filter(island %in% c("____","____"))
 ```
 
 ```{r filter_q4-solution}
-penguins %>%
+penguins |>
   filter(sex == "female",
-         species == "chinstrap") %>%
+         species == "chinstrap") |>
   filter(island %in% c("Dream","Torgersen"))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 5
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 5
 
-Create a subset from `penguins` that contains penguins that are either gentoos **OR** have a body mass greater than 4500 g.
+Crea un subconjunt de `penguins` que contingui pingüins que siguin gentoo **O** tinguin una massa corporal superior a 4500 g.
 
 ```{r filter_q5, exercise = TRUE}
 
 ```
 
 ```{r filter_q5-hint}
-penguins %>%
+penguins |>
   filter(species == "_____" | body_mass_g > _____)
 ```
 
 ```{r filter_q5-solution}
-penguins %>%
+penguins |>
   filter(species == "Gentoo" | body_mass_g > 4500)
 ```
 
 
 
-## 4. dplyr::select()
+## 4. select()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/select.html) for `select()` documentation from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/select.html) per veure la documentació de `select()`.
 
-The main job of `dplyr::select()` is to help you pick which **columns** (if your data is in tidy format, those are variables) to keep or exclude.
+La funció principal de `select()` és ajudar-te a triar quines **columnes** (si les teves dades estan en format tidy, les columnes són variables) vols mantenir o excloure.
 
-While making subsets of variables is rarely *necessary* for analyses (and is often unadvised), it can make large data sets with many variables more manageable.
+Mentre que fer subconjunts de variables rarament és *necessari* per a anàlisis (i sovint no es recomana), pot fer que conjunts de dades grans amb moltes variables siguin més manejables.
 
-As a reminder, here's a sample from the **penguins** data (5 observations / 344 total).
+### EXEMPLES DE SELECCIÓ
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
+Dins `select()`, llista les variables que vols mantenir en el teu nou subconjunt, separades per comes. Selecciona un rang de variables seqüencials utilitzant dos punts `:` entre les variables dels extrems inclusius. Per exemple, per seleccionar de les columnes `giraffe` a `narwhal` tot el rang es fa referència amb `giraffe:narwhal`. Nota: també pots utilitzar `select()` per reordenar columnes - l'ordre en què es llisten dins de `select()` és l'ordre en què apareixeran en el nou subconjunt.
 
-### SELECT EXAMPLES
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-Within `select()`, list the variables that you want to keep in your new subset, separated by commas. Select a range of sequential variables using a colon `:` between inclusive endpoint variables. For example, to select from columns `giraffe` to `narwhal` the entire range is referenced with `giraffe:narwhal`. Note: you can also use `select()` to reorder columns - the order they are listed within `select()` is the order they'll appear in the new subset.
-
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
-
-Keep columns `year`, `island`, and `species` from the `penguins` data.
+Queda't les columnes `year`, `island` i `species` de les dades `penguins`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(year, island, species)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Keep columns `species` and `body_mass_g` from the `penguins` data.
+Queda't amb les columnes `species` i `body_mass_g` de les dades `penguins`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(species, body_mass_g)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-From the `penguins` data, keep all columns from `species` to `body_mass_g`.
+Amb les dades `penguins`, queda't amb totes les columnes entre `species` i `body_mass_g`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(species:body_mass_g)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4
 
-Keep columns from `species` to `bill_depth_mm` *and* `year` from the penguins data. Note that additional (non-sequential) variables are added after a comma.
+Queda't amb les columnes de `species` a `bill_depth_mm` *i* `year` de les dades dels pingüins. Tingues en compte que les variables addicionals (no seqüencials) s'afegeixen després d'una coma, així:
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(species:bill_depth_mm, year)
 ```
 
-### Excluding columns
+### Excloure columnes
 
-Use the minus sign (`-`) in front of a variable name to exclude a single variable. For example, if I add `-giraffe` within the `select()` function, the `giraffe` column will be excluded.
+Utilitza el signe menys (`-`) davant del nom d'una variable per excloure-la. Per exemple, si afegim `-giraffe` dins la funció `select()`, la columna `giraffe` serà exclòs.
 
-To exclude a range of columns, use `!(giraffe:narwhale)`.
+Per excloure un rang de columnes, utilitza `!(giraffe:narwhale)`.
 
-To exclude several non-sequential columns, use `!c(giraffe, wolf, shark)`.
+Per excloure diverses columnes no seqüencials, utilitza `!c(giraffe, llop, tauró)`.
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 5
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 5
 
-From `penguins`, keep all variables *except* `island`
+Amb les dades `penguins`, queda't amb totes les columnes excepte `island`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(-island)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 6
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 6
 
-From `penguins`, keep all variables *except* those from `island` to `bill_depth_mm`
+Amb les dades `penguins`, queda't amb totes les columnes excepte `island` a `bill_depth_mm`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(!(island:bill_depth_mm))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 7
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 7
 
-From `penguins`, keep all variables *except* `species`, `flipper_length_mm`, and `year`
+Amb les dades `penguins`, queda't amb totes les columnes excepte `species`, `flipper_length_mm` i `year`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(!c(species, flipper_length_mm, year))
 ```
 
-### Some useful helper functions
+### Algunes funcions útils
 
-There are **many** helper functions that add power to `select()` (for example, selecting all variables of a specified class, or selecting all variables that start or end with a certain string pattern). Check out more [here](https://dplyr.tidyverse.org/reference/select.html).
+Hi ha **moltes** funcions auxiliars que afegiran superpoders a `select()` (per exemple, seleccionar totes les variables d'una classe específica, o seleccionar totes les variables que comencen o acaben amb un cert patró de cadena). Consulta més [aquí](https://dplyr.tidyverse.org/reference/select.html).
 
-Here, we'll just explore a few: `starts_with()`, `ends_with()`, and `contains()`. These allow you to select any columns that match your conditions for the column name.
+N'explorarem algunes: `starts_with()`, `ends_with()` i `contains()`. Aquestes et permeten seleccionar qualsevol columna que compleixi les teves condicions pel nom de la columna.
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 8
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 8
 
-Keep columns with names that start with "bill".
+Queda't amb les columnes que comencen amb "bill".
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(starts_with("bill"))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")`Example 9
+#### `r fa("fas fa-robot", fill = "purple")`Exemple 9
 
-Keep columns with names that end in "mm".
+Queda't amb les columnes que acaben amb "mm".
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(ends_with("mm"))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 10
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 10
 
-Keep columns with names that contain "length".
+Queda't amb les columnes que contenen "length".
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(contains("length"))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 11
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 11
 
-Keep columns that contain "length" OR start with "bill".
+Queda't amb les columnes que contenen "length" O comencen amb "bill".
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   select(contains("length") | starts_with("bill"))
 ```
 
-### Examples in sequence
+### Exemples en seqüència
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 12
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 12
 
-Make a subset from penguins that only contains observations for gentoo penguins, and then only keep columns for island, sex and body mass.
+Fes un subconjunt de pingüins que només conté observacions per a pingüins Gentoo, i després només manté les columnes per `island`, `sex` i `body_mass_g.`
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  filter(species == "Gentoo") %>%
+penguins |>
+  filter(species == "Gentoo") |>
   select(island, sex, body_mass_g)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 13
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 13
 
-Make a subset from penguins that only contains observations for male penguins with flippers longer than 200 mm, and then only keep columns that end with "mm".
+Fes un subconjunt de pingüins que només conté observacions per a pingüins `male` amb `flipper_length_mm` més llargues de 200 mm, i després només manté les columnes que acaben amb "mm".
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  filter(sex == "male", flipper_length_mm > 200) %>%
+penguins |>
+  filter(sex == "male", flipper_length_mm > 200) |>
   select(ends_with("mm"))
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### SELECT PRACTICE ACTIVITIES
+### ARA TU!
 
-In the code chunks below, write your own code to practice with the `dplyr::select()` function. If you get stuck, click on the "Hint" or "Solution" buttons.
+A la part de sota, escriu el teu propi codi per practicar amb la funció `select()`. Si et quedes encallat, clica els botons "Hint" o "Solution".
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Starting with the `penguins` data, only keep the `body_mass_g` variable.
+A partir de les dades `penguins`, queda't només amb la variable `body_mass_g`.
 
 ```{r select_q1, exercise = TRUE}
 
 ```
 
 ```{r select_q1-solution}
-penguins %>%
+penguins |>
   select(body_mass_g)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with the `penguins` data, keep columns from `bill_length_mm` to `body_mass_g`, and `year`
+A partir de les dades `penguins`, queda't amb les columnes de `bill_length_mm` a `body_mass_g`, i `year`.
 
 ```{r select_q2, exercise = TRUE}
 
 ```
 
 ```{r select_q2-hint}
-penguins %>%
+penguins |>
   select(______:______, ______)
 ```
 
 ```{r select_q2-solution}
-penguins %>%
+penguins |>
   select(bill_lenth_mm:body_mass_g, year)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-Starting with the `penguins` data, keep all columns except `island`
+A partir de les dades `penguins`, queda't amb totes les columnes excepte `island`.
 
 ```{r select_q3, exercise = TRUE}
 
 ```
 
 ```{r select_q3-solution}
-penguins %>%
+penguins |>
   select(-island)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 4
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 4
 
-From `penguins`, keep all variables *except* `species`, `sex` and `year`.
+A partir de les dades `penguins`, queda't amb totes les columnes excepte `species`, `sex` i `year`.
 
 ```{r select_q4, exercise = TRUE}
 
 ```
 
 ```{r select_q4-hint}
-penguins %>%
+penguins |>
   select(!c(____, ____, ____))
 ```
 
 ```{r select_q4-solution}
-penguins %>%
+penguins |>
   select(!c(species, sex, year))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 5
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 5
 
-From `penguins`, keep the `species` column and any columns that end with "mm".
+A partir de les dades `penguins`, queda't amb la columna `species` i qualsevol columna que acabi amb "mm".
 
 ```{r select_q5, exercise = TRUE}
 
 ```
 
 ```{r select_q5-hint}
-penguins %>%
+penguins |>
   select(______, ends_with("__"))
 ```
 
 ```{r select_q5-solution}
-penguins %>%
+penguins |>
   select(species, ends_with("mm"))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 6
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 6
 
-From `penguins`, keep any columns that contain "bill" OR end with "mm".
+A partir de les dades `penguins`, queda't amb les columnes que contenen "bill" O acaben amb "mm".
 
 ```{r select_q6, exercise = TRUE}
 
 ```
 
 ```{r select_q6-hint}
-penguins %>%
+penguins |>
   select(contains("___") | ends_with("___"))
 ```
 
 ```{r select_q6-solution}
-penguins %>%
+penguins |>
   select(contains("bill") | ends_with("mm"))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 7
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 7
 
-In a piped sequence, starting from `penguins`:
+En una seqüència de canals (pipes), començant per `penguins`:
 
-- Only keep observations for female penguins observed on Dream Island, THEN...
-- Keep variables `species`, and any variable starting with "bill"
+- Només conserva observacions per a pingüins female observats a Dream Island, I DESPRÉS...
+- Només conserva les columnes `species`, i qualsevol columna que comenci per "bill".
 
 ```{r select_q7, exercise = TRUE}
 
 ```
 
 ```{r select_q7-hint}
-penguins %>%
-  filter(sex == "_____", island == "_____") %>%
+penguins |>
+  filter(sex == "_____", island == "_____") |>
   select(_____, starts_with("____"))
 ```
 
 ```{r select_q7-solution}
-penguins %>%
-  filter(sex == "female", island == "Dream") %>%
+penguins |>
+  filter(sex == "female", island == "Dream") |>
   select(species, starts_with("bill"))
 ```
 
 
 
-## 5. dplyr::relocate()
+## 5. relocate()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/relocate.html) for `relocate()` documentation from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/relocate.html) per consultar la documentació de  `relocate()`
 
 ```{r, echo=FALSE, out.width="100%", fig.align = "center"}
 knitr::include_graphics("images/dplyr_relocate.png")
 ```
 
-Use `relocate()` to move columns around, without messing with rows or groups. Some useful bits:
+Utilitza `relocate()` per moure columnes, sense tocar les files o els grups. Alguns punts útils:
 
-- Use `.before` or `.after` to move a column to before or after another (by name or class)
-- If a single column is within the function (e.g. `relocate(col_A)`), that column is moved to the front
+- Utilitza `.before` o `.after` per moure una columna abans o després d'una altra (per nom o classe)
+- Si una sola columna està dins de la funció (p. ex. `relocate(col_A)`), aquesta columna es mou a l'inici
 
-See details and more examples from tidyverse.org [here](https://dplyr.tidyverse.org/reference/relocate.html).
+Trobaràs més detalls i més exemples a tidyverse.org [aquí](https://dplyr.tidyverse.org/reference/relocate.html).
 
-As a reminder, here's a sample from the **penguins** data (5 observations / 344 total).
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
+### EXEMPLES AMB RELOCATE
 
-### RELOCATE EXAMPLES
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
-
-Move the `year` column to the front of the `penguins` data.
+Mou la columna `year` al principi de les dades `penguins`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   relocate(year)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Starting with `penguins`, move the `flipper_length_mm` column to after the `island` column.
+Comença amb `penguins`, mou la columna `flipper_length_mm` després de la columna `island`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   relocate(flipper_length_mm, .after = island)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-Starting with `penguins`, move the `bill_lenth_mm` column to before `year`.
+Começa amb `penguins`, mou la columna `bill_length_mm` abans de la columna `year`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   relocate(bill_length_mm, .before = year)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4
 
-Starting with `penguins`, move any numeric variables to after any factor variables.
+Começa amb `penguins`, mou qualsevol variable numèrica després de qualsevol variable de factor.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   relocate(where(is.numeric), .after = where(is.factor))
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### RELOCATE PRACTICE ACTIVITIES
+### ARA TU!
 
-In the code chunks below, write your own code to practice with the `dplyr::relocate()` function. If you get stuck, click on the "Hint" or "Solution" buttons.
+En els fragments de codi següents, escriu el teu propi codi per practicar amb la funció `relocate()`. Si et quedes aturat, clica en els botons "Pista" o "Solució".
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Starting with `penguins`, move the `species` variable to before the `sex` variable.
+Comença amb `penguins`, mou la columna `species` abans de la columna `sex`.
 
 ```{r relocate_q1, exercise = TRUE}
 
 ```
 ```{r relocate_q1-solution}
-penguins %>%
+penguins |>
   relocate(species, .before = sex)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with `penguins`, relocate the `bill_length_mm` variable so that it is the first column.
+Começa amb `penguins`, mou la columna `bill_length_mm` perquè sigui la primera columna.
 
 ```{r relocate_q2, exercise = TRUE}
 
 ```
+
 ```{r relocate_q-solution}
-penguins %>%
+penguins |>
   relocate(bill_length_mm)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-Move any factor variables (hint: `is.factor`) to after any integer variables (`is.integer`).
+Mou les variables de factor (pista: `is.factor`) després de les variables enteres (`is.integer`).
 
 ```{r relocate_q3, exercise = TRUE}
 
 ```
 
 ```{r relocate_q3-solution}
-penguins %>%
+penguins |>
   relocate(where(is.factor), .after = where(is.integer))
 ```
 
 
-## 6. dplyr::rename()
+## 6. rename()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/rename.html) for `rename()` documentation from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/rename.html) per trobar la documentació de `rename()`
 
-Use `rename()` to change the name of one or more columns. Generally, it'll look something like this:
+Utilitza `rename()` per canviar el nom d'una o més columnes. Generalment, tindrà un aspecte semblant a això:
 
-  `df %>% rename(new_name = old_name)`
+  `df |> rename(nom_nou = nom_inicial)`
 
-You can also use a function to rename multiple columns using `rename_with()`.
+També pots utilitzar la funció per canviar el nom de diverses columnes amb `rename_with()`.
 
 ```{r, echo=FALSE, out.width="100%", fig.align = "center"}
 knitr::include_graphics("images/rename_sm.jpg")
 ```
 
-As a reminder, here's a sample from the **penguins** data (5 observations / 344 total).
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
+### EXEMPLES AMB RENAME
 
-### RENAME EXAMPLES
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
-
-Rename the `island` column to `palmer_island`.
+Reanomena la columna `island` i posa-li `palmer_island`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   rename(palmer_island = island)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Rename the `year` column to `study_yr`, and `body_mass_g` to `mass`.
+Reanomena la columna `year` per `study_yr`, i `body_mass_g` per `mass`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   rename(study_yr = year, mass = body_mass_g)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-Convert all column names in `penguins` to upper case with `toupper`.
+Convertir tots els noms de columna de `penguins` a majúscules amb `toupper`.
 
-Note: This is probably not a thing you'd actually want to do in the wild.
+Nota: Això probablement no és una cosa que vulguis fer en la vida real.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   rename_with(toupper)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4.
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4.
 
-Convert all column names in `penguins` that end with "mm" to upper case (`toupper`).
+Convertir tots els noms de columna de `penguins` que acabin amb "mm" a majúscules (`toupper`).
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   rename_with(toupper, ends_with("mm"))
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### RENAME PRACTICE ACTIVITIES
+### ARA TU!
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Starting with `penguins`, rename the `flipper_length_mm` column to `flipper_mm`.
+Començant amb `penguins`, reanomena la columna `flipper_length_mm` per `flipper_mm`.
 
 ```{r rename_q1, exercise = TRUE}
 
 ```
 
 ```{r rename_q1-solution}
-penguins %>%
+penguins |>
   rename(flipper_mm = flipper_length_mm)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with `penguins`, rename the `island` column to `island_name` and the `species` column to `penguin_spp`.
+A partir de `penguins`, reanomena la columna `island` per `island_name` i la columna `species` per `penguin_spp`.
 
 ```{r rename_q2, exercise = TRUE}
 
 ```
 
 ```{r rename_q2-solution}
-penguins %>%
+penguins |>
   rename(island_name = island,
          penguin_spp = species)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-Starting with `penguins`, convert any column names that start with "bill" to upper case.
+A partir de `penguins`, converteix els noms de columna que comencin per "bill" a majúscules.
 
 ```{r rename_q3, exercise = TRUE}
 
 ```
 
 ```{r rename_q3-hint}
-penguins %>%
+penguins |>
   rename_with(____, starts_with("____"))
 ```
 
 ```{r rename_q3-solution}
-penguins %>%
+penguins |>
   rename_with(toupper, starts_with("bill"))
 ```
 
-## 7. dplyr::mutate()
+## 7. mutate()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/mutate.html) for `mutate()` documentation from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/mutate.html) per trobar més informació sobre `mutate()`
 
-Use `mutate()` to add a new column, while keeping the existing columns. The general structure is:
+Utilitza `mutate()` per afegir una nova columna, mantenint les columnes existents. L'estructura general és:
 
 ```{r, echo = TRUE, eval = FALSE}
-df %>%
-  mutate(new_column_name = what_it_contains)
+df |>
+  mutate(nom_nou_columna = el_que_contindrà)
 ```
 
-For example, if I had a data frame `df` with columns `A` and `B`, I can add a new column `C` that is the sum of `A` and `B` as follows (note: you can also use `sum(A,B)` here instead of `A + B`):
+
+Per exemple, si tingués un data frame `df` amb les columnes `A` i `B`, puc afegir una nova columna `C` que sigui la suma de `A` i `B` de la següent manera (nota: també pots utilitzar `sum(A,B)` aquí en lloc de `A + B`):
 
 ```{r, echo = TRUE, eval = FALSE}
-df %>%
+df |>
   mutate(C = A + B)
 ```
 
-...as demonstrated by mutant monsters below:
+...com es demostra amb els monstres mutants següents:
 
 ```{r, echo=FALSE, out.width="80%", fig.align = "center"}
 knitr::include_graphics("images/dplyr_mutate.png")
 ```
 
-As a reminder, here's a sample from the **penguins** data (5 observations / 344 total).
+### EXEMPLES AMB MUTATE
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-### MUTATE EXAMPLES
-
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
-
-Add a new column to penguins with body mass (currently in grams) converted to kilograms.
+Afegeix una nova columna a `penguins` amb body_mass_g (actualment en grams) convertida a quilograms.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(body_mass_kg = body_mass_g / 1000)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Add a new column to penguins with the ratio of bill length to bill depth.
+Afegeix una nova columna a `penguins` amb la relació de la longitud del bec a la profunditat del bec.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(bill_ratio = bill_length_mm / bill_depth_mm)
 ```
 
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-You can also add multiple new columns within a single `mutate()`. 
+També pots afegir múltiples columnes noves dins d'un sol `mutate()`.
 
-For example, let's add three new columns to penguins within one `mutate()` function: one column that contains the bill ratio (bill length / bill depth), one that contains the body mass converted to kg, and one that contains the flipper length converted to meters. 
+Per exemple, afegim tres noves columnes a `penguins` dins d'una sola funció `mutate()`: una columna que conté la relació del bec (longitud del bec / profunditat del bec), una que conté la massa corporal convertida a kg, i una que conté la longitud de la aleta convertida a metres.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(bill_ratio = bill_length_mm / bill_depth_mm,
          body_mass_kg = body_mass_g / 1000,
          flipper_length_m = flipper_length_mm / 1000)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4
 
-Add a new column with a sequence of values from 1 to the length of the data frame.
+Afegeix una nova columna amb una seqüència de valors de 1 a la longitud del data frame.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(record_number = seq(1:n()))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 5
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 5
 
-Convert the `island` variable to a character using `mutate`.
+Convertir la variable `island` a caràcter utilitzant `mutate`.
 
-Note / danger: this is a different (and a bit dangerous) use of `mutate()`. If you give the new column the same name as an existing column, the existing column will be **replaced**. As a general rule, if in doubt ADD A COLUMN (little cost) instead of overwriting a column.
+Nota / perill: aquest és un ús diferent (i una mica perillós) de `mutate()`. Si dones el mateix nom a la nova columna que a una columna existent, la columna existent serà **reemplaçada**. Com a regla general, si tens dubtes, AFEGEIX UNA COLUMNA en lloc de sobreescriure una columna.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(island = as.character(island))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 6
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 6
 
-Use `fct_relevel()` within `mutate()` to reorder the factor levels of `island` to (1) Torgersen, (2) Biscoe, (3) Dream.
+Utilitza `fct_relevel()` dins de `mutate()` per reordenar els nivells de factor de `island` a (1) Torgersen, (2) Biscoe, (3) Dream.
 
-Note: See `fct_relevel()` & `fct_reorder()` in the `forcats` package to change the order of factor levels.
+Nota: Consulta `fct_relevel()` i `fct_reorder()` al paquet `forcats` per canviar l'ordre dels nivells del factor.
 
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(island = fct_relevel(island, "Torgersen", "Biscoe", "Dream"))
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### MUTATE PRACTICE ACTIVITIES
+### ARA TU!
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Add a column to `penguins` that contains a new column `flipper_m`, which is the `flipper_length_mm` (flipper length in millimeters) converted to units of meters.
+Afegeix una columna a `penguins` que contingui una nova columna `flipper_m`, que és la `flipper_length_mm` (longitud de la aleta en mil·límetres) convertida a metres.
 
 ```{r mutate_q1, exercise = TRUE}
 
 ```
 
 ```{r mutate_q1-hint}
-penguins %>%
+penguins |>
   mutate(_____ = _____ / 1000)
 ```
 
 ```{r mutate_q1-solution}
-penguins %>%
+penguins |>
   mutate(flipper_m = flipper_length_mm / 1000)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-The `year` column in `penguins` is currently an integer. Add a new column named `year_fct` that is the year converted to a factor (hint: `as.factor()`).
+La columna `year` a `penguins` és actualment un enter. Afegeix una nova columna anomenada `year_fct` que és l'any convertit en un factor (pista: `as.factor()`).
 
 ```{r mutate_q2, exercise = TRUE}
 
 ```
 
 ```{r mutate_q2-hint}
-penguins %>%
+penguins |>
   mutate(_____ = as.factor(_____))
 ```
 
 ```{r mutate_q2-solution}
-penguins %>%
+penguins |>
   mutate(year_fct = as.factor(year))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-To `penguins`, add a new column `mass_lb` that contains penguin body mass, currently in grams, converted to pounds (1 gram = 0.0022 lb).
-
+Afegeix una columna a `penguins` que contingui la massa corporal dels pingüins, actualment en grams, convertida a lliures (1 gram = 0.0022 lb).
 
 ```{r mutate_q3, exercise = TRUE}
 
 ```
 
 ```{r mutate_q3-solution}
-penguins %>%
+penguins |>
   mutate(mass_lb = body_mass_g * 0.0022)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 4
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 4
 
-Starting with `penguins`, do the following within a single `mutate()` function:
+Amb `penguins`, fes el següent dins d'una sola funció `mutate()`:
 
-- Convert the `species` variable to a character
-- Add a new column (called `flipper_cm` with flipper length in centimeters)
-- Convert the `island` column to lowercase
+- Converteix la variable `species` a caràcter
+- Afegeix una nova columna (anomenada `flipper_cm`) amb la longitud de la aleta en centímetres
+- Converteix la columna `island` a minúscules
+
 
 ```{r mutate_q4, exercise = TRUE}
 
 ```
 
 ```{r mutate_q4-hint}
-penguins %>%
+penguins |>
   mutate(species = as.character(_____),
          flipper_cm = _____ / __,
          island = tolower(_____))
 ```
 
 ```{r mutate_q4-solution}
-penguins %>%
+penguins |>
   mutate(species = as.character(species),
          flipper_cm = flipper_length_mm / 10,
          island = tolower(island))
 ```
 
-## 8. dplyr::group_by() %>% summarize()
+## 8. group_by() |> summarize()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/group_by.html) for `group_by()` documentation, and [here](https://dplyr.tidyverse.org/reference/summarise.html)
- for `summarize()` documentation, from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/group_by.html) per veure la documentació de `group_by()`, i [aquí](https://dplyr.tidyverse.org/reference/summarise.html)
+ per veure la de `summarize()`.
 
-Use the combination of `group_by()` and `summarize()` to find find summary statistics for different groups, and put them in a nice table.
+Utilitza la combinació de `group_by()` i `summarize()` per trobar estadístiques resum per a diferents grups, i posar-les en una taula agradable.
 
-From [dplyr.tidyverse.org](https://dplyr.tidyverse.org/):
+De [dplyr.tidyverse.org](https://dplyr.tidyverse.org/):
 
-- `group_by()` "takes an existing tbl and converts it into a grouped tbl where operations are performed 'by group'"
-- `summarize()` "creates a new data frame. It will have one (or more) rows for each combination of grouping variables; if there are no grouping variables, the output will have a single row summarising all observations in the input. It will contain one column for each grouping variable and one column for each of the summary statistics that you have specified"
+- `group_by()` "agafa una taula existent i la converteix en una taula agrupada, on les operacions es realitzen 'per grup'"
+- `summarize()` "crea un nou data.frame. Tindrà una (o més) files per a cada combinació de variables agrupades; si no hi ha variables de grup, la sortida tindrà una sola fila que resumeix totes les observacions. Contindrà una columna per a cada variable de grup i una columna per a cada una de les estadístiques resum que hagis especificat"
 
-Basically, specify groups within your data with `group_by()`, then use `summarize()` to calculate something (e.g. the mean or other statistic) for each group, & return it in a nice table. It's a powerhouse combo.
+Bàsicament, especifica grups dins de les teves dades amb `group_by()`, després utilitza `summarize()` per calcular alguna cosa (p. ex., la mitjana o una altra estadística) per a cada grup, i retorna-ho en una taula agradable. És una combinació potent.
 
-As a reminder for the following examples, here's a sample from the **penguins** data (5 observations / 344 total).
+### EXEMPLES AMB GROUP_BY + SUMMARIZE 
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-### GROUP_BY + SUMMARIZE EXAMPLES
-
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
-
-Use `group_by()` and `summarize()` to prepare a summary table containing the mean of penguin body mass, grouped by penguin species. Note that the `na.rm = TRUE` argument is added to exclude missing values.
+Utilitza `group_by()` i `summarize()` per preparar una taula resum amb la mitjana de la massa corporal dels pingüins, agrupada per espècie de pingüí. Observa que s'afegeix l'argument `na.rm = TRUE` per excloure els valors que falten.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(mass_mean = mean(body_mass_g, na.rm = TRUE))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Use `group_by()` and `summarize()` to prepare a summary table containing the mean and standard deviation of penguin body mass, grouped by penguin species.
+Utilitza `group_by()` i `summarize()` per preparar una taula resum amb la mitjana i la desviació estàndard de la massa corporal dels pingüins, agrupada per espècie de pingüí.
 
-Notice that there are now *two* columns created by `summarize()`, mass_mean and mass_sd.
+Fixa't que ara hi ha *dues* columnes creades per `summarize()`, `mass_mean` i `mass_sd`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(mass_mean = mean(body_mass_g, na.rm = TRUE),
             mass_sd = sd(body_mass_g, na.rm = TRUE))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-Use `group_by()` and `summarize()` to prepare a summary table containing the mean and standard deviation of penguin bill length, grouped by penguin species and sex.
+Utilitza `group_by()` i `summarize()` per preparar una taula resum amb la mitjana i la desviació estàndard de la longitud del bec dels pingüins, agrupada per espècie de pingüí i sexe.
 
-Note that the data are now grouped by `species` and `sex` (within `group_by()`), and two columns are created: `bill_length_mean` and `bill_length_sd`, which will contain the mean and standard deviation of bill length within each group.
+Fixa't que les dades ara estan agrupades per `species` i `sex` (dins de `group_by()`), i es creen dues columnes: `bill_length_mean` i `bill_length_sd`, que contindran la mitjana i la desviació estàndard de la longitud del bec dins de cada grup.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species, sex) %>%
+penguins |>
+  group_by(species, sex) |>
   summarize(bill_length_mean = mean(bill_length_mm, na.rm = TRUE),
             bill_length_sd = sd(bill_length_mm, na.rm = TRUE))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4
 
-Use `group_by()` and `summarize()` to prepare a summary table containing the maximum and minimum flipper length for male Adelie penguins, grouped by island.
+Utilitza `group_by()` i `summarize()` per preparar una taula resum amb la longitud màxima i mínima de la aleta per als pingüins Adelie mascles, agrupada per illa.
 
-Here, we'll first use `filter()` to only keep rows for male Adelie penguins, then use `group_by()` and `summarize()` to find the minimum and maximum flipper length **by island**, & put them in a nice table.
+En aquest cas, primer utilitzarem `filter()` per mantenir només les files dels pingüins Adelie mascles, després utilitzarem `group_by()` i `summarize()` per trobar la longitud mínima i màxima de la aleta **per illa**, i posar-les en una taula agradable.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  filter(species == "Adelie", sex == "male") %>%
-  group_by(island) %>%
+penguins |>
+  filter(species == "Adelie", sex == "male") |>
+  group_by(island) |>
   summarize(flip_max_length = max(flipper_length_mm),
             flip_min_length = min(flipper_length_mm))
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### GROUP_BY %>% SUMMARIZE PRACTICE ACTIVITIES
+### ARA TU!
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Starting with `penguins`, create a summary table containing the maximum and minimum length of flippers (call the columns `flip_max` and `flip_min`) for chinstrap penguins, grouped by island.
+A partir de `penguins`, crea una taula resum amb la longitud màxima i mínima de les aletes (anomena les columnes `flip_max` i `flip_min`) per als pingüins de barbeta, agrupada per illa.
 
 ```{r group_summarize_q1, exercise = TRUE}
 
 ```
 
 ```{r group_summarize_q1-hint}
-penguins %>%
-  filter(species == "_______") %>%
-  group_by(_____) %>%
+penguins |>
+  filter(species == "_______") |>
+  group_by(_____) |>
   summarize(flip_max = max(_____),
             flip_min = min(_____))
 ```
 
 ```{r group_summarize_q1-solution}
-penguins %>%
-  filter(species == "Chinstrap") %>%
-  group_by(island) %>%
+penguins |>
+  filter(species == "Chinstrap") |>
+  group_by(island) |>
   summarize(flip_max = max(flipper_length_mm),
             flip_min = min(flipper_length_mm))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with `penguins`, group the data by species and year, then create a summary table containing the mean bill depth (call this `bill_depth_mean`) and mean bill length (call this `bill_length_mean`) for each group.
+Amb `penguins`, agrupa les dades per espècie i any, després crea una taula resum amb la mitjana de la profunditat del bec (anomena-la `bill_depth_mean`) i la mitjana de la longitud del bec (anomena-la `bill_length_mean`) per a cada grup.
 
-Don't forget: `na.rm = TRUE`
+Atenció!: Per defecte (i bones raons estadístiques) R no calcularà la mitjana si algun valor és missing (NA), pots canviar-ho afegint l'argument `na.rm = TRUE` dins `mean()` així: `mean(x, na.rm = TRUE)`
 
 ```{r group_summarize_q2, exercise = TRUE}
 
 ```
 
 ```{r group_summarize_q2-hint}
-penguins %>%
-  group_by(_____, _____) %>%
+penguins |>
+  group_by(_____, _____) |>
   summarize(
     _________ = mean(______, na.rm = TRUE),
     _________ = mean(______, na.rm = TRUE)
@@ -1226,144 +1167,141 @@ penguins %>%
 ```
 
 ```{r group_summarize_q2-solution}
-penguins %>%
-  group_by(species, year) %>%
+penguins |>
+  group_by(species, year) |>
   summarize(
     bill_depth_mean = mean(bill_depth_mm, na.rm = TRUE),
     bill_length_mean = mean(bill_length_mm, na.rm = TRUE)
   )
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-Starting with `penguins`, in a piped sequence:
+Comença amb `penguins`, en una seqüència de canals:
 
-- Add a new column called `bill_ratio` that is the ratio of bill length to bill depth (hint: `mutate()`)
-- Only keep columns `species` and `bill_ratio`
-- Group the data by `species`
-- Create a summary table containing the mean of the `bill_ratio` variable, by species (name the column in the summary table `bill_ratio_mean`)
+- Afegeix una nova columna anomenada `bill_ratio` que sigui la relació entre la longitud del bec i la profunditat del bec (pista: `mutate()`)
+- Queda't només amb les columnes `species` i `bill_ratio`
+- Agrupa les dades per `species`
+- Crea una taula resum amb la mitjana de la variable `bill_ratio`, per espècie (anomena la columna de la taula resum `bill_ratio_mean`)
 
 ```{r group_summarize_q3, exercise = TRUE}
 
 ```
 
 ```{r group_summarize_q3-hint}
-penguins %>%
-  mutate(bill_ratio = ______ / ______) %>%
-  select(______, ______) %>%
-  group_by(______) %>%
+penguins |>
+  mutate(bill_ratio = ______ / ______) |>
+  select(______, ______) |>
+  group_by(______) |>
   summarize(______ = mean(______, na.rm = TRUE))
 ```
 
 ```{r group_summarize_q3-solution}
-penguins %>%
-  mutate(bill_ratio = bill_length_mm / bill_depth_mm) %>%
-  select(species, bill_ratio) %>%
-  group_by(species) %>%
+penguins |>
+  mutate(bill_ratio = bill_length_mm / bill_depth_mm) |>
+  select(species, bill_ratio) |>
+  group_by(species) |>
   summarize(bill_ratio_mean = mean(bill_ratio, na.rm = TRUE))
 ```
 
-## 9. dplyr::across()
+## 9. across()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/across.html) for `across()` documentation from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/across.html) per veure la documentació d' `across()`.
 
-From [tidyverse.org](https://dplyr.tidyverse.org/reference/across.html), `dplyr::across()` "makes it easy to apply the same transformation to multiple columns."
+De [tidyverse.org](https://dplyr.tidyverse.org/reference/across.html), `across()` "facilita l'aplicació de la mateixa transformació a múltiples columnes."
+
+
 
 ```{r, echo=FALSE, out.width="100%", fig.align = "center"}
 knitr::include_graphics("images/dplyr_across_where.jpeg")
 ```
 
-The `across()` function is especially useful within `summarize()` to efficiently create summary tables with one or more functions applied to multiple variables (columns).
+La funció `across()` és especialment útil dins de `summarize()` per crear taules resum eficientment amb funcions aplicades a múltiples variables (columnes).
 
-Let's compare two ways of doing the same thing: creating a summary table of mean values for all penguin size measurements ending in "mm" (bill depth, bill length, flipper length), by species.
+Anem a comparar dues maneres de fer el mateix: crear una taula resum amb els valors mitjans de totes les mesures de grandària dels pingüins que acaben en "mm" (profunditat del bec, longitud del bec, longitud de l'ala), per espècie.
 
-As a reminder, here's a sample from the **penguins** data (5 observations / 344 total).
 
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
-
-#### Approach 1: Using `group_by()` %>% `summarize()`
+#### Alternativa 1: Utilitzant `group_by()` |> `summarize()`
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE, eval = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(bill_length_mean = mean(bill_length_mm, na.rm = TRUE),
             bill_depth_mean = mean(bill_depth_mm, na.rm = TRUE),
             flipper_length_mean = mean(flipper_length_mm, na.rm = TRUE))
 ```
 
-#### Approach 2: Using `across()` within `summarize()`
+#### Alternativa 2: Utilitzant `across()` dins `summarize()`
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(across(ends_with("mm"), mean, na.rm = TRUE))
 ```
 
-The output is the same - but the second way (using `across()`) is much more efficient - and becomes even more useful as the number of columns you want to transform increases!
+El resultat és el mateix - però la segona manera (utilitzant `across()`) és molt més eficient - serà encara més útil a mesura que augmenta el nombre de columnes que vols transformar!
 
-The `across()` function also happily accepts most helper functions introduced for `select()`, including: `starts_with()`, `ends_with()`, `contains()`, as well as to specify classes (e.g. `is.numeric`, `is.character`, etc.). Follow along with the examples & exercises below to learn more!
+La funció `across()` també accepta la majoria de les funcions auxiliars introduïdes per `select()`, com ara: `starts_with()`, `ends_with()`, `contains()`, així com per especificar classes (per exemple, `is.numeric`, `is.character`, etc.). Segueix els exemples i exercicis següents per aprendre'n més!
 
-### ACROSS EXAMPLES
+### EXEMPLES AMB ACROSS
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-Starting with `penguins`, use `across()` within `group_by() %>% summarize()` to make a summary table containing the mean value of all columns from bill depth (bill_depth_mm) to body mass (body_mass_g), grouped by species and year.
+Amb `penguins`, utilitza `across()` dins de `group_by() |> summarize()` per crear una taula resum amb el valor mitjà de totes les columnes de la profunditat del bec (bill_depth_mm) a la massa corporal (body_mass_g), agrupades per espècie i any.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species, island) %>%
+penguins |>
+  group_by(species, island) |>
   summarize(across(bill_depth_mm:body_mass_g, min, na.rm = TRUE))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Starting with `penguins`, use `across()` within `group_by()` and `summarize()` to make a summary table containing the minimum values for bill length and body mass, grouped by penguin species.
+Amb `penguins`, utilitza `across()` dins de `group_by() |> summarize()` per crear una taula resum amb el valor mínim de la longitud del bec i la massa corporal, agrupades per espècie.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(across(c(bill_length_mm, body_mass_g), min, na.rm = TRUE))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 3
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 3
 
-Starting with `penguins`, use `across()` within `group_by()` and `summarize()` to make a summary table containing the maximum value within any column starting with "bill", grouped by `year`.
+Amb `penguins`, utilitza `across()` dins de `group_by() |> summarize()` per crear una taula resum amb el valor màxim de totes les columnes de la longitud i la profunditat del bec, agrupades per any.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(year) %>%
+penguins |>
+  group_by(year) |>
   summarize(across(starts_with("bill"), max, na.rm = TRUE))
 ```
 
-Since what is presented in the table is the *maximum* value for bill length and depth, we probably want to update the column names. We could do that manually using `rename()`, or we can add the `.names = ` argument within `across()` as shown in the examples below.
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 4
+Com que el que es presenta a la taula és el valor *màxim* de la longitud i la profunditat del bec, probablement volem actualitzar els noms de les columnes. Podríem fer-ho manualment utilitzant `rename()`, o bé afegir l'argument `.names = ` dins de `across()` com es mostra als exemples següents.
 
-Repeat the example above, but add an argument that will automatically update the column names containing the maximum bill length and depth to start with "max_" followed by the original column name.
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 4
+
+Repetim l'exemple anterior, però afegim un argument que actualitzarà automàticament els noms de les columnes que continguin la longitud i la profunditat màximes del bec per començar amb "max_" seguit del nom original de la columna.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(year) %>%
+penguins |>
+  group_by(year) |>
   summarise(across(starts_with("bill"), max, na.rm = TRUE, .names = "max_{.col}"))
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 5
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 5
 
-Starting from `penguins`, create a summary table that finds the mean and standard deviation for all variables containing the string "length", grouped by penguin species. Update the column names to start with "avg_" or "sd_", followed by the original column names.
+Amb `penguins`, crea una taula resum que trobi la mitjana i la desviació estàndard de totes les variables que continguin la paraula "length", agrupades per espècie de pingüí. Actualitza els noms de les columnes per començar amb "avg_" o "sd_", seguit del nom original de la columna.
 
-There's quite a bit happening here, so a little breakdown:
 
-- We use `contains("length")` to indicate we'll apply the functions to any columns with the word "length" in the name
-- Within `list()` is where the functions to be applied across columns are given, and where their "names" of "avg" and "stdev" are set
-- We use `.names = ` to define the final column names in the summary table. Here, the name should start with the function "name" specified above ("avg" or "stdev"), then an underscore, then the original column name (that's what `"{.fn}_{.col}"` will do)
+Aquí passen unes quantes coses, així que ho desglossarem una mica:
+
+- Utilitzem `contains("length")` per indicar que aplicarem les funcions a totes les columnes amb la paraula "length" al nom
+- Dins `list()` es defineixen les funcions que s'aplicaran a les columnes, i on es defineixen els "noms" de "avg" i "stdev". (`list()` només és necessari quan vols aplicar més d'una funció a les columnes seleccionades)
+- Utilitzem `.names = ` per definir els noms de les columnes finals a la taula resum. Aquí, el nom ha de començar amb la funció "name" especificada anteriorment ("avg" o "stdev"), després un guió baix, i finalment el nom original de la columna (això és el que farà `"{.fn}_{.col}"`)
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(across(contains("length"),
                    list(avg = mean, stdev = sd),
                    na.rm = TRUE,
@@ -1372,21 +1310,21 @@ penguins %>%
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### ACROSS PRACTICE ACTIVITIES
+### ARA TU!
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Starting with `penguins`, group data by island then use `across()` to find the median value of groups for any columns containing the string "mm". The names in the resulting table should be the original column name followed by an underscore, then the word "median" (e.g. colname_median).
+Amb `penguins`, utilitza `across()` dins de `group_by() |> summarize()` per crear una taula resum amb el valor mitjà de totes les columnes de la profunditat del bec (bill_depth_mm) a la massa corporal (body_mass_g), agrupades per espècie i any.
 
 ```{r across_q1, exercise = TRUE}
 
 ```
 
 ```{r across_q1-hint}
-penguins %>%
-  group_by(______) %>%
+penguins |>
+  group_by(______) |>
   summarize(across(contains("______"),
                    median,
                    na.rm = TRUE,
@@ -1395,8 +1333,8 @@ penguins %>%
 ```
 
 ```{r across_q1-solution}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(across(contains("mm"),
                    median,
                    na.rm = TRUE,
@@ -1404,181 +1342,172 @@ penguins %>%
             )
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with `penguins`, only keep observations for Adelie penguins, then use `across()` to find the maximum value for any numeric variable (hint: `where(is.numeric)`) for each island (i.e. group by island).
+Amb `penguins`, preserva només les observacions dels pingüins Adelie, i després utilitza `across()` per trobar el valor màxim de qualsevol variable numèrica (pista: `where(is.numeric)`) per a cada illa (és a dir, agrupar per illa).
 
 ```{r across_q2, exercise = TRUE}
 
 ```
 
 ```{r across_q2-hint}
-penguins %>%
-  filter(species == "______") %>%
-  group_by(______) %>%
+penguins |>
+  filter(species == "______") |>
+  group_by(______) |>
   summarize(across(where(_____), _____, na.rm = TRUE))
 ```
 
 ```{r across_q2-solution}
-penguins %>%
-  filter(species == "Adelie") %>%
-  group_by(island) %>%
+penguins |>
+  filter(species == "Adelie") |>
+  group_by(island) |>
   summarize(across(where(is.numeric), max, na.rm = TRUE))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 3
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 3
 
-Starting from `penguins`, write a piped sequence to:
+Amb `penguins`, escriu una següent seqüència canalitzada per:
 
-- Exclude penguins observed on Biscoe Island
-- Only keep variables `species` through `body_mass_g`
-- Rename the `species` variable to `spp_penguin`
-- Group the data by `spp_penguin`
-- Find the mean value for any variable containing the string "length", by penguin species, with column names updated to the original column name appended with "_max" at the end
+- Excloure els pingüins observats a Biscoe Island
+- Mantenir només les variables entre `species` i `body_mass_g`
+- Reanomena la variable `species` a `spp_penguin`
+- Agrupa les dades per `spp_penguin`
+- Calcula el valor mitjà de qualsevol variable que contingui la paraula "length", per espècie de pingüí, amb els noms de les columnes actualitzats perquè comencin amb el nom original de la columna seguit de "_avg" al final
 
 ```{r across_q3, exercise = TRUE}
 
 ```
 
 ```{r across_q3-hint}
-penguins %>%
-  filter(island != "_____") %>%
-  select(_____:_____) %>%
-  rename(_____ = _____) %>%
-  group_by(_____) %>%
+penguins |>
+  filter(island != "_____") |>
+  select(_____:_____) |>
+  rename(_____ = _____) |>
+  group_by(_____) |>
   summarize(across(contains("_____"), mean, na.rm = TRUE, .names = "{.col}_avg"))
 ```
 
 ```{r across_q3-solution}
-penguins %>%
-  filter(island != "Biscoe") %>%
-  select(species:body_mass_g) %>%
-  rename(spp_penguin = species) %>%
-  group_by(spp_penguin) %>%
+penguins |>
+  filter(island != "Biscoe") |>
+  select(species:body_mass_g) |>
+  rename(spp_penguin = species) |>
+  group_by(spp_penguin) |>
   summarize(across(contains("length"), mean, na.rm = TRUE, .names = "{.col}_avg"))
 ```
 
 
+## 10. count()
 
-## 10. dplyr::count()
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/count.html) Per trobar la documentació de `count()`
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/count.html) for `count()` documentation from tidyverse.org.
+La funció `count()` embolcalla un munt de coses en una línia de codi amigable per ajudar-te a trobar els comptes d'observacions per grup. Per demostrar què fa, trobem els recomptes de pingüins al conjunt de dades `penguins` per espècie de dues maneres diferents:
 
-The `dplyr::count()` function wraps a bunch of things into one beautiful friendly line of code to help you find counts of observations by group. To demonstrate what it does, let's find the counts of penguins in the `penguins` dataset by species in two different ways:
+1. Utilitzant `group_by()` |> `summarize()` amb la funció `n()`
+2. Utilitzant `count()` per aconseguir el mateix
 
-1. Using `group_by()` %>% `summarize()` with `n()` to count observations
-2. Using `count()` to do the exact same thing
-
-As a reminder, here's a sample from the **penguins** data (5 observations / 344 total).
-
-```{r}
-penguins[c(3,31,199,220,304),] %>%
-  kable() %>%
-  kable_styling(full_width = F)
-```
-
-#### Approach 1: `group_by()` %>% `summarize()` w/ `n()`
+#### Alternativa 1: `group_by()` |> `summarize()` amb `n()`
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  group_by(species) %>%
+penguins |>
+  group_by(species) |>
   summarize(
     n = n()
   )
 ```
 
-#### Approach 2: `count()`
+#### Alternativa 2: `count()`
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   count(species)
 ```
 
-Pretty cool, right? The `dplyr::count()` function does all the work of `group_by()`, `summarize()` **and** `n()` for you!
+Bastant útil, no? La funció `count()` fa tot el treball de `group_by()`, `summarize()` **i** `n()` per a tu!
 
-**Note:** The default assumes that each observation is in its own row (case format). If you have a column containing *counts* (i.e. more that one observation are represented in a single row) use the `wt = ` argument to specify the column containing counts, then the `count()` function will sum them instead to find totals.
+**Nota:** El valor per defecte assumeix que cada observació està en la seva pròpia fila (format de cas). Si tens una columna que conté *recomptes* (és a dir, més d'una observació es representa en una sola fila) utilitza l'argument `wt = ` per especificar la columna que conté els comptes, llavors la funció `count()` els sumarà per trobar els totals.
 
-### COUNT EXAMPLES
+### EXEMPLES AMB COUNT
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-Starting with the `penguins` dataset, find the counts of penguins by species and year.
+Amb el conjunt de dades `penguins`, troba els comptes de pingüins per espècie i any.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   count(species, year)
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Starting from `penguins`, find the number of observations by island.
+Amb el conjunt de dades `penguins`, troba els comptes d'observacions per illa.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   count(island)
 ```
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### COUNT PRACTICE ACTIVITIES
+### ARA TU!
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Starting with `penguins`, find counts of observation by species, island and year.
+Amb `penguins`, troba els comptes d'observacions per espècie, illa i any.
 
 ```{r count_q1, exercise = TRUE}
 
 ```
 
 ```{r count_q1-solution}
-penguins %>%
+penguins |>
   count(species, island, year)
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with `penguins`, filter to only keep Adelie and gentoo penguins, then find counts by species and sex.
+Amb `penguins`, filtra per mantenir només els pingüins Adelie i gentoo, després troba els comptes per espècie i sexe.
 
 ```{r count_q2, exercise = TRUE}
 
 ```
 
 ```{r count_q2-hint}
-penguins %>%
-  filter(species %in% c("_____","_____")) %>%
+penguins |>
+  filter(species %in% c("_____","_____")) |>
   count(_____, _____)
 ```
 
 ```{r count_q2-solution}
-penguins %>%
-  filter(species %in% c("Adelie","Gentoo")) %>%
+penguins |>
+  filter(species %in% c("Adelie","Gentoo")) |>
   count(species, sex)
 ```
 
-## 11. dplyr::case_when()
+## 11. case_when()
 
-[CLICK HERE](https://dplyr.tidyverse.org/reference/case_when.html) for `case_when()` documentation from tidyverse.org.
+[CLICA AQUÍ](https://dplyr.tidyverse.org/reference/case_when.html) per accedir a la documentació de `case_when()`
 
-The `case_when()` function is like a really friendly if-else statement. When used within `mutate()`, it allows you to add a new column containing values dependent on your condition(s).
+La funció `case_when()` és un condicional (if-else) amigable. Quan s'utilitza dins de `mutate()`, et permet afegir una nova columna que conté valors dependents de les teves condicions.
 
 ```{r, echo=FALSE, out.width="80%", fig.align = "center"}
 knitr::include_graphics("images/dplyr_case_when_sm.png")
 ```
 
-### CASE_WHEN EXAMPLES
+### EXEMPLES AMB CASE_WHEN
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 1
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 1
 
-To `penguins`, add a new column `size_bin` that contains:
+Amb el conjunt de dades `penguins`, afegeix una nova columna `size_bin` que conté:
 
-- "large" if body mass is greater than 4500 g
-- "medium" if body mass is greater than 3000 g, and less than or equal to 4500 g
-- "small" if body mass is less than or equal to 3000 g
+- "large" si la massa corporal és superior a 4500 g
+- "medium" si la massa corporal és superior a 3000 g, i inferior o igual a 4500 g
+- "small" si la massa corporal és inferior o igual a 3000 g
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
+penguins |>
   mutate(size_bin = case_when(
       body_mass_g > 4500 ~ "large",
       body_mass_g > 3000 & body_mass_g <= 4500 ~ "medium",
@@ -1587,24 +1516,25 @@ penguins %>%
   )
 ```
 
-#### `r fa("fas fa-robot", fill = "purple")` Example 2
+#### `r fa("fas fa-robot", fill = "purple")` Exemple 2
 
-Starting with `penguins`:
+Amb el conjunt de dades `penguins`:
 
-- Limit the columns to `species`, `year`, and `flipper_length_mm`
-- Rename the `year` column to `study_year`
-- Only keep observations for Adelie penguins
-- Add a new column called `flipper_rank` that contains:
+- Limita les columnes a `species`, `year` i `flipper_length_mm`
+- Reanomeneu la columna `year` a `study_year`
+- Queda't només amb les observacions dels pingüins Adelie
+- Afegeix una nova columna anomenada `flipper_rank` que conté:
 
-  - 1 if `flipper_length_mm` is < 200 mm
-  - 2 if `flipper_length_mm` is >= 200 mm
-  - 0 if `flipper_length_mm` is anything else (e.g. `NA`)
+  - 1 si `flipper_length_mm` és < 200 mm
+  - 2 si `flipper_length_mm` és >= 200 mm
+  - 0 si `flipper_length_mm` és qualsevol altra cosa (p. ex., `NA`)
+
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-penguins %>%
-  select(species, year, flipper_length_mm) %>%
-  rename(study_year = year) %>%
-  filter(species == "Adelie") %>%
+penguins |>
+  select(species, year, flipper_length_mm) |>
+  rename(study_year = year) |>
+  filter(species == "Adelie") |>
   mutate(flipper_rank = case_when(
     flipper_length_mm < 200 ~ 1,
     flipper_length_mm >= 200 ~ 2,
@@ -1614,24 +1544,24 @@ penguins %>%
 
 <br>
 <br>
-<hr class="examples">
+<hr class="Examples">
 
-### CASE_WHEN PRACTICE ACTIVITIES
+### ARA TU!
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 1
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 1
 
-Add a new column to `penguins` called `study_year` that contains:
+Afegeix una nova columna a `penguins` anomenada `study_year` que conté:
 
-- "Year 1" if the year is 2007
-- "Year 2" if the year is 2008
-- "Year 3" if the year is 2009
+- "Year 1" si l'any és 2007
+- "Year 2" si l'any és 2008
+- "Year 3" si l'any és 2009
 
 ```{r case_when_q1, exercise = TRUE}
 
 ```
 
 ```{r case_when_q1-hint}
-penguins %>%
+penguins |>
   mutate(study_year =
            case_when(
              year == 2007 ~ "Year 1",
@@ -1640,19 +1570,19 @@ penguins %>%
            ))
 ```
 
-#### `r fa("fas fa-keyboard", fill = "purple")` Practice Activity 2
+#### `r fa("fas fa-keyboard", fill = "purple")` Activitat Pràctica 2
 
-Starting with `penguins`, only keep observations for chinstrap penguins, then only keep the `flipper_length_mm` and `body_mass_g` variables. Add a new column called `fm_ratio` that contains the ratio of flipper length to body mass for each penguin. Next, add another column named `ratio_bin` which contains the word "high" if `fm_ratio` is greater than or equal to 0.05, "low" if the ratio is less than 0.05, and "no record" if anything else (e.g. `NA`).
+Amb `penguins`, filtra per mantenir només els pingüins Chinstrap, després selecciona les variables `flipper_length_mm` i `body_mass_g`. Afegeix una nova columna anomenada `fm_ratio` que conté el ratio de la longitud de la natació a la massa corporal per a cada pingüí. A continuació, afegeix una altra columna anomenada `ratio_bin` que conté la paraula "high" si `fm_ratio` és major o igual a 0.05, "low" si el ratio és inferior a 0.05, i "no record" si és qualsevol altra cosa (p. ex., `NA`).
 
 ```{r case_when_q2, exercise = TRUE}
 
 ```
 
 ```{r case_when_q2-hint}
-penguins %>%
-  filter(species == "_____") %>%
-  select(_____, _____) %>%
-  mutate(fm_ratio = _____ / _____) %>%
+penguins |>
+  filter(species == "_____") |>
+  select(_____, _____) |>
+  mutate(fm_ratio = _____ / _____) |>
   mutate(ratio_bin = case_when(
     fm_ratio >= 0.05 ~ "_____",
     fm_ratio < 0.05 ~ "_____",
@@ -1661,10 +1591,10 @@ penguins %>%
 ```
 
 ```{r case_when_q2-solution}
-penguins %>%
-  filter(species == "Chinstrap") %>%
-  select(flipper_length_mm, body_mass_g) %>%
-  mutate(fm_ratio = flipper_length_mm / body_mass_g) %>%
+penguins |>
+  filter(species == "Chinstrap") |>
+  select(flipper_length_mm, body_mass_g) |>
+  mutate(fm_ratio = flipper_length_mm / body_mass_g) |>
   mutate(ratio_bin = case_when(
     fm_ratio >= 0.05 ~ "high",
     fm_ratio < 0.05 ~ "low",
@@ -1672,9 +1602,17 @@ penguins %>%
   ))
 ```
 
-## Resources
+## Recursos
 
-Want to learn more about `dplyr`, the `tidyverse`, or coding in R generally? Here are some great places to start: 
+Si vols aprendre més sobre `dplyr`, el `tidyverse`, o codificar en R en general, aquí tens alguns llocs fantàstics per començar:
 
 - [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham and Garrett Grolemund
 - [dplyr.tidyverse.org](https://dplyr.tidyverse.org/)
+
+Aquest tutorial està fet amb el paquet `learnr` de R, que és una eina fantàstica per aprendre R de forma interavtiva. Si vols fer el teu propi tutorial, pots començar aquí: [rstudio.github.io/learnr/](https://rstudio.github.io/learnr/)
+
+Aquest document és una adaptació del tutorial `dplyr` de RStudio. Gratuït i obert per a tothom. L'autora original d'aquest document es diu Allison Horst i pots trobar-la a [Github](https://github.com/allisonhorst/dplyr-learnr). 
+ 
+
+
+
