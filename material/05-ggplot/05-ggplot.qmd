@@ -87,7 +87,7 @@ Amb quina funció buscaries la mitja de `cost_bilion_usd` dins `olympics`
 
 ```{r}
 
-summary(olympics)
+
 
 
 ```
@@ -421,8 +421,8 @@ https://rpkgs.datanovia.com/ggpubr/
 
 # install.packages("ggpubr")
 
-olympics |> 
-  ggpubr::ggboxplot(x = "type", y = "athletes", add = "jitter")
+starwars |> 
+  ggpubr::ggboxplot(x = "gender", y = "height", add = "jitter")
 
 ```
 
@@ -435,10 +435,11 @@ exemples aquí: https://emilhvitfeldt.github.io/paletteer/
 
 # install.packages("paletteer")
 
-olympics |> 
-  ggplot(aes(x = year, y = athletes, color = type)) +
+starwars |> 
+  filter(name != "Jabba Desilijic Tiure", name != "Yoda") |> 
+  ggplot(aes(x = birth_year, y = mass, color = gender)) +
   geom_point() +
-  theme_bw() +
+  theme_linedraw() +
   paletteer::scale_color_paletteer_d("nord::aurora")
 
 ```
