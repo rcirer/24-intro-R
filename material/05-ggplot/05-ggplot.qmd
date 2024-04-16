@@ -1,0 +1,444 @@
+---
+title: "Visualització de dades"
+author: "Rafel Cirer-Sastre"
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+
+# Ja conèixes tidyverse: ggplot2, dplyr, etc.
+library(tidyverse)
+
+# Aquesta vegada també farem servir el paquet rio.
+
+## Hi ha rio dins els paquets instal.lats a aquest ordinador?
+"rio" %in% installed.packages()
+
+## Si no hi és, instal·la'l!
+# install.packages("rio")
+
+## Carrega el paquet
+library(rio)
+
+```
+
+# Importació i exportació de dades
+
+Importar dades amb el paquet rio és bastant fàcil:
+
+```{r}
+
+starwars <- import("../../dades/starwars.csv")
+
+```
+
+## Ara tu!
+
+Importa el dataset olympic_games.csv i guarda'l amb el nom `olympics` .
+
+**Bonus point:** També pots importar dades teves si hi vols jugar; et
+serà més fàcil si primer les copies dins la carpeta `/dades`. Recorda
+assignar-les a un nom breu però descriptiu.
+
+```{r}
+
+
+
+
+```
+
+# Inspecció de dades
+
+Pots inspeccionar arxius de dades amb vàries funcions. Prova les
+següents i completa els comentaris per anotar que fa cadascuna:
+
+```{r}
+
+# Amb les funcions head() i tail() puc ...
+head(starwars)
+tail(starwars)
+
+# glimpse() em permet ...
+glimpse(starwars)
+
+# Puc utilitzar View() si vull ...
+View(starwars)
+
+# summary() pot servir per ...
+summary(starwars)
+
+```
+
+## Ara tu!
+
+Enlluerna'm. Utilitza una sola funció per fer-te una idea del contingut
+d'`olympics`
+
+```{r}
+
+
+
+
+```
+
+Amb quina funció buscaries la mitja de `cost_bilion_usd` dins `olympics`
+
+```{r}
+
+summary(olympics)
+
+
+```
+
+# Visualització de dades
+
+## Una introducció pràctica
+
+Llegeix el següent codi, executa'l i respon les preguntes següents:
+
+```{r}
+
+starwars |> 
+  ggplot(mapping = aes(x = height, y = mass)) +
+    geom_point() +
+    labs(
+      title = "Característiques antropomètriques dels personatges de Starwars",
+      x = "Talla (cm)", 
+      y = "Pes (kg)"
+      )
+
+```
+
+### Preguntes
+
+1.  Què significa aquest missatge d'error de dalt?
+
+2.  Observes alguna cosa estranya en el gràfic?
+
+    ![](#img/jabbaplot.png)
+
+### Ara tu!
+
+Copia i enganxa el codi anterior, i trasteja:
+
+-   **Padawan:**
+
+    -   Filtra `name != "Jabba Desilijic Tiure"`;
+    -   Selecciona `height`, `mass` i `species`;
+    -   Elimina els missing amb `drop_na()`
+
+-   **Jedi Knight:** Afegeix un subtítol amb el teu nom complet
+
+-   **Jedi Master:** Fes que tots els punts siguin de color vermell
+
+-   **Grand Master:** Fes que el color sigui una variable del gràfic, en
+    funció del sexe
+
+```{r}
+
+
+
+
+```
+
+## Presentacions formals:
+
+### ggplot2
+
+-   `ggplot2` és el paquet de visualització de dades de `tidyverse`
+-   `gg` significa "Grammar of Graphics"
+-   Inspirat pel llibre **Grammar of Graphics** de Leland Wilkinson
+
+### Grammar of Graphics
+
+La gramàtica de les gràfiques és un conjunt de regles per construir els
+components d'un gràfic. Intenta respondre les preguntes:
+
+```{r}
+
+ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
+  geom_point() +
+  labs(
+    title = "Mass vs. height of Starwars characters",
+    x = "Height (cm)", 
+    y = "Weight (kg)"
+    )
+
+```
+
+-   Quina és la funció que crea el gràfic?
+-   Quin dataset s'utilitza?
+-   Quines variables s'utilitzen i per quines propietats?
+-   Quines capes geomètriques mostra el gràfic?
+
+L'estructura bàsica del codi per crear un gràfic amb `ggplot2` és:
+
+``` r
+ggplot(data = [dataset], 
+       mapping = aes(x = [variable-x], 
+                     y = [variable-y])) +
+   geom_xxx() +
+   altres opcions
+```
+
+### Ara tu!
+
+Fes un gràfic de dispersió entre dues variables continues. Pots explorar
+la relació entre `year` i `cost_billion_usd` en les dades `olympics`, o
+bé jugar amb les teves dades propies.
+
+```{r}
+
+
+
+```
+
+Pots desar el gràfic en un objecte i modificar-lo després:
+
+```{r}
+
+fig_01 <- starwars |> 
+  filter(name != "Jabba Desilijic Tiure", name != "Yoda") |> 
+  select(birth_year, mass) |> 
+  ggplot(aes(x = birth_year, y = mass)) 
+
+fig_01 +
+  geom_point()
+
+```
+
+I afegir-li tantes capes com necessitis, per exemple uns títols ben
+xulos:
+
+```{r}
+
+
+fig_01 +
+  geom_point() +
+  labs(
+    title = "Any de naixement i pes dels personatges de Starwars",
+    subtitle = "S'han exclos Jabba Desilijic Tiure (1358 kg) i Yoda (800 anys)",
+    x = "Naixement (any)", 
+    y = "Pes (kg)",
+    caption = "https://swapi.py4e.com"
+    )
+
+```
+
+## Arguments
+
+-   `ggplot` sempre comença sempre amb `data` i `mapping`. Pots ometre
+    `data =` o `mapping =` si ho declares en aquest ordre.
+-   L'argument `mapping` s'introdueix a través de la funció `aes()`
+    (d'aesthetics), que conté la llista de variables que vols
+    transformar en propietats estètiques del gràfic.
+
+```{r}
+
+  ggplot(starwars, aes(x = birth_year, y = mass, shape = sex)) +
+  geom_point()
+
+```
+
+## Geometries
+
+Les geometries (`geom_xxxx`) són les capes amb formes que es poden
+afegir al gràfic.
+
+-   `geom_point()`
+-   `geom_line()`
+-   `geom_bar()`
+-   `geom_boxplot()`
+-   `geom_smooth()`
+-   `geom_histogram()`
+-   `geom_density()`
+-   ...
+
+Pots observar la distribució d'una variable continua amb
+geom_histogram() o bé geom_density() així:
+
+```{r}
+
+fig_03 <- starwars |> 
+  filter(name != "Jabba Desilijic Tiure") |> 
+  select(mass) |> 
+  drop_na() |> 
+  ggplot(aes(x = mass))
+
+fig_03 + geom_histogram()
+
+fig_03 + geom_density()
+
+```
+
+### Ara tu!
+
+Explora la distribució de variables continues. Pots utilitzar les teves
+dades o bé `cost_bilion_usd` a les dades `olympics.`
+
+```{r}
+
+
+
+```
+
+Les variables categòriques es poden representar amb barres. En funció de
+quin eix posis dins `aes()` aconseguiràs barres horitzontals o
+verticals:
+
+```{r}
+
+starwars |>
+  ggplot(aes(x = sex)) +
+  geom_bar()
+
+starwars |>
+  ggplot(aes(y = species)) +
+  geom_bar()
+
+```
+
+### Ara tu!
+
+Explora la distribució de variables categòriques. Pots utilitzar les
+teves dades o bé `type` a les dades `olympics`.
+
+```{r}
+
+
+
+
+```
+
+## Panells
+
+Un altre gran ús per les variables categòriques és subdividir el gràfic
+en múltiples panells. Pots fer-ho amb `facet_wrap()` si només vols una
+dimensió o `facet_grid()` si en vols dues:
+
+```{r}
+
+starwars |> 
+  select(birth_year, mass, gender, sex) |> 
+  drop_na() |> 
+  ggplot(aes(x = birth_year)) + 
+  geom_density() +
+  facet_wrap(~gender, scales = "free")
+
+```
+
+### Ara tu!
+
+Fes un gràfic amb panells. Si vols, pots utilitzar les teves dades o bé
+fer graficar la relació entre `year` i `athletes` amb les dades
+`olympics` i dividir el gràfic en panells en funció de `type` .
+
+```{r}
+
+
+
+```
+
+## Temes
+
+El millor de `ggplot2` és que pots personalitzar els gràfics amb una
+línia de codi. Fixa't amb la última línia d'aquest gràfic:
+
+```{r}
+
+starwars |> 
+  filter(name != "Jabba Desilijic Tiure", name != "Yoda") |> 
+  select(birth_year, mass) |> 
+  ggplot(aes(x = birth_year, y = mass))  +
+  geom_point() +
+  labs(
+    title = "Any de naixement i pes dels personatges de Starwars",
+    subtitle = "S'han exclos Jabba Desilijic Tiure (1358 kg) i Yoda (800 anys)",
+    x = "Naixement (any)", 
+    y = "Pes (kg)",
+    caption = "https://swapi.py4e.com"
+    ) +
+  theme_minimal()
+
+```
+
+### Ara tu!
+
+Copia a continuació un dels gràfics anteriors i explora amb ell els
+següents temes:
+
+-   `theme_grey()`
+-   `theme_bw()`
+-   `theme_linedraw()`
+-   `theme_light()`
+-   `theme_dark()`
+-   `theme_minimal()`
+-   `theme_classic()`
+-   `theme_void()`
+
+```{r}
+
+
+
+```
+
+## Extensions
+
+### ggthemes
+
+Si vols més temes pots instal·lar el paquet `ggthemes.` Trobaràs més
+exemples aquí: https://jrnold.github.io/ggthemes/
+
+```{r}
+
+# install.packages("ggthemes")
+
+starwars |> 
+  filter(name != "Jabba Desilijic Tiure", name != "Yoda") |> 
+  select(birth_year, mass) |> 
+  ggplot(aes(x = birth_year, y = mass))  +
+  geom_point() +
+  labs(
+    title = "Any de naixement i pes dels personatges de Starwars",
+    subtitle = "S'han exclos Jabba Desilijic Tiure (1358 kg) i Yoda (800 anys)",
+    x = "Naixement (any)", 
+    y = "Pes (kg)",
+    caption = "https://swapi.py4e.com"
+    ) +
+  ggthemes::theme_economist()
+
+```
+
+### ggpubr
+
+La forma més ràpida de fer gràfics per revistes científiques és amb
+`ggpubr`. Trobaràs més exemples aquí:
+https://rpkgs.datanovia.com/ggpubr/
+
+```{r}
+
+# install.packages("ggpubr")
+
+olympics |> 
+  ggpubr::ggboxplot(x = "type", y = "athletes", add = "jitter")
+
+```
+
+### paletteer
+
+Vols canviar els colors? Pots fer-ho amb `paletteer`. Trobaràs més
+exemples aquí: https://emilhvitfeldt.github.io/paletteer/
+
+```{r}
+
+# install.packages("paletteer")
+
+olympics |> 
+  ggplot(aes(x = year, y = athletes, color = type)) +
+  geom_point() +
+  theme_bw() +
+  paletteer::scale_color_paletteer_d("nord::aurora")
+
+```
