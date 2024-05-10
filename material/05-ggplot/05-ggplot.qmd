@@ -6,6 +6,8 @@ editor:
     wrap: 72
 ---
 
+
+
 ```{r}
 
 # Ja conèixes tidyverse: ggplot2, dplyr, etc.
@@ -44,7 +46,7 @@ assignar-les a un nom breu però descriptiu.
 
 ```{r}
 
-
+olympics <- import("../../dades/olympics/olympics_games.csv")
 
 
 ```
@@ -78,7 +80,7 @@ d'`olympics`
 
 ```{r}
 
-
+glimpse(olympics)
 
 
 ```
@@ -87,8 +89,9 @@ Amb quina funció buscaries la mitja de `cost_bilion_usd` dins `olympics`
 
 ```{r}
 
+summary(olympics)
 
-
+mean(olympics$cost_billion_usd, na.rm = TRUE)
 
 ```
 
@@ -117,7 +120,7 @@ starwars |>
 
 2.  Observes alguna cosa estranya en el gràfic?
 
-    ![](#img/jabbaplot.png)
+    ![](img/jabbaplot.png)
 
 ### Ara tu!
 
@@ -138,7 +141,18 @@ Copia i enganxa el codi anterior, i trasteja:
 
 ```{r}
 
-
+starwars |> 
+  filter(name != "Jabba Desilijic Tiure") |> 
+  select(height, mass, sex) |> 
+  drop_na() |> 
+  ggplot(mapping = aes(x = height, y = mass, color = sex)) +
+    geom_point() +
+    labs(
+      title = "Característiques antropomètriques dels personatges de Starwars",
+      subtitle = "Rafel Cirer-Sastre",
+      x = "Talla (cm)", 
+      y = "Pes (kg)"
+  )
 
 
 ```
@@ -164,7 +178,7 @@ ggplot(data = starwars, mapping = aes(x = height, y = mass)) +
     title = "Mass vs. height of Starwars characters",
     x = "Height (cm)", 
     y = "Weight (kg)"
-    )
+  )
 
 ```
 
@@ -191,6 +205,8 @@ bé jugar amb les teves dades propies.
 
 ```{r}
 
+ggplot(olympics, aes(x = year, y = cost_billion_usd)) +
+  geom_point()
 
 
 ```
@@ -282,6 +298,7 @@ dades o bé `cost_bilion_usd` a les dades `olympics.`
 
 
 
+
 ```
 
 Les variables categòriques es poden representar amb barres. En funció de
@@ -307,8 +324,9 @@ teves dades o bé `type` a les dades `olympics`.
 
 ```{r}
 
-
-
+olympics |> 
+  ggplot(aes(x = type)) +
+  geom_bar()
 
 ```
 
@@ -435,11 +453,33 @@ exemples aquí: https://emilhvitfeldt.github.io/paletteer/
 
 # install.packages("paletteer")
 
-starwars |> 
+fig_05 <- starwars |> 
   filter(name != "Jabba Desilijic Tiure", name != "Yoda") |> 
   ggplot(aes(x = birth_year, y = mass, color = gender)) +
   geom_point() +
   theme_linedraw() +
   paletteer::scale_color_paletteer_d("nord::aurora")
 
+fig_05
+
+ggsave("figura_01.png", fig_05)
+
 ```
+
+
+```{r}
+
+a <- lm(mass ~ height, data = starwars)
+
+b <- aov(a)
+
+summary(a)
+
+report::report(a)
+
+```
+
+```{r}
+
+```
+
